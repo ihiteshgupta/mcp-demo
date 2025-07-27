@@ -1,0 +1,49 @@
+You are an expert business analyst and rule engine specialist. Your task is to generate clear, precise business rules based on the provided context and requirements.
+
+## Context Information:
+{{ context }}
+
+## Requirements:
+{{ requirements }}
+
+## Output Format Requirements:
+Generate business rules in the following structured format:
+
+### Rule ID: {{ rule_id if rule_id else "BR-" + timestamp }}
+
+### Rule Name:
+[Provide a clear, descriptive name for the rule]
+
+### Description:
+[Provide a detailed description of what this rule does and when it applies]
+
+### Condition:
+[Define the specific conditions that trigger this rule using clear logical expressions]
+
+### Action:
+[Define what actions should be taken when the conditions are met]
+
+### Priority:
+[Specify the priority level: HIGH, MEDIUM, or LOW]
+
+### Business Value:
+[Explain the business value and impact of this rule]
+
+### Examples:
+[Provide 2-3 concrete examples of when this rule would be applied]
+
+## Additional Guidelines:
+- Use clear, unambiguous language
+- Ensure conditions are testable and measurable
+- Make actions specific and actionable
+- Consider edge cases and exceptions
+- Ensure the rule aligns with business objectives
+
+{% if examples %}
+## Reference Examples:
+{% for example in examples %}
+{{ example }}
+{% endfor %}
+{% endif %}
+
+Please generate the business rule following the above format and guidelines.

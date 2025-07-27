@@ -1,0 +1,222 @@
+{
+  "memory_stores": {
+    "redis": {
+      "backend": "redis",
+      "enabled": false,
+      "host": "localhost",
+      "port": 6379,
+      "db": 0,
+      "password": null,
+      "ssl": false,
+      "timeout": 5,
+      "connect_timeout": 5,
+      "max_connections": 10,
+      "retry_on_timeout": true
+    },
+    "sqlite": {
+      "backend": "sqlite",
+      "enabled": true,
+      "database_path": "./data/memory.db",
+      "wal_mode": true,
+      "journal_mode": "WAL",
+      "synchronous": "NORMAL",
+      "cache_size": 2000,
+      "temp_store": "memory"
+    },
+    "postgresql": {
+      "backend": "postgresql",
+      "enabled": false,
+      "host": "localhost",
+      "port": 5432,
+      "database": "memory_db",
+      "username": "memory_user",
+      "password": null,
+      "ssl": false,
+      "pool_size": 10,
+      "max_overflow": 20
+    },
+    "memory": {
+      "backend": "memory",
+      "enabled": true,
+      "max_sessions": 1000,
+      "max_memories_per_session": 10000,
+      "cleanup_interval_minutes": 60
+    }
+  },
+  "server": {
+    "name": "Memory Management MCP Server",
+    "version": "1.0.0",
+    "description": "Production-grade memory management and persistence",
+    "host": "localhost",
+    "port": 8004,
+    "transport": "stdio"
+  },
+  "features": {
+    "multi_backend_support": true,
+    "session_management": true,
+    "memory_types": true,
+    "importance_levels": true,
+    "automatic_cleanup": true,
+    "memory_search": true,
+    "analytics": true,
+    "persistence": true
+  },
+  "memory_types": {
+    "short_term": {
+      "default_ttl": 3600,
+      "max_size": 1000,
+      "auto_cleanup": true
+    },
+    "working": {
+      "default_ttl": 86400,
+      "max_size": 5000,
+      "auto_cleanup": false
+    },
+    "episodic": {
+      "default_ttl": null,
+      "max_size": 10000,
+      "auto_cleanup": false
+    },
+    "semantic": {
+      "default_ttl": null,
+      "max_size": 50000,
+      "auto_cleanup": false
+    },
+    "procedural": {
+      "default_ttl": null,
+      "max_size": 20000,
+      "auto_cleanup": false
+    },
+    "long_term": {
+      "default_ttl": null,
+      "max_size": 100000,
+      "auto_cleanup": false
+    }
+  },
+  "importance_levels": {
+    "critical": {
+      "never_delete": true,
+      "priority_boost": 100,
+      "backup_required": true
+    },
+    "high": {
+      "min_retention_days": 365,
+      "priority_boost": 50,
+      "backup_required": true
+    },
+    "medium": {
+      "min_retention_days": 90,
+      "priority_boost": 10,
+      "backup_required": false
+    },
+    "low": {
+      "min_retention_days": 30,
+      "priority_boost": 0,
+      "backup_required": false
+    },
+    "temporary": {
+      "max_retention_hours": 24,
+      "priority_boost": -10,
+      "backup_required": false
+    }
+  },
+  "cleanup": {
+    "auto_cleanup": true,
+    "cleanup_interval_hours": 6,
+    "expired_memory_cleanup": true,
+    "low_importance_cleanup": true,
+    "session_cleanup": true,
+    "orphaned_memory_cleanup": true,
+    "max_memory_age_days": 365,
+    "max_session_age_days": 90
+  },
+  "search": {
+    "default_limit": 10,
+    "max_limit": 100,
+    "similarity_threshold": 0.7,
+    "enable_fuzzy_search": true,
+    "enable_semantic_search": false,
+    "index_content": true,
+    "index_metadata": true,
+    "search_across_sessions": false
+  },
+  "sessions": {
+    "auto_create": true,
+    "session_timeout_hours": 24,
+    "max_sessions_per_user": 10,
+    "session_sharing": false,
+    "cross_session_memory": false,
+    "session_analytics": true
+  },
+  "performance": {
+    "batch_size": 100,
+    "max_concurrent_operations": 20,
+    "cache_size": 1000,
+    "connection_pool_size": 10,
+    "query_timeout_seconds": 30,
+    "memory_pool_size": "512MB"
+  },
+  "storage": {
+    "compress_content": true,
+    "encryption": false,
+    "backup_enabled": true,
+    "backup_interval_hours": 24,
+    "backup_retention_days": 30,
+    "incremental_backups": true
+  },
+  "monitoring": {
+    "track_memory_usage": true,
+    "track_session_activity": true,
+    "track_search_patterns": true,
+    "track_performance": true,
+    "alert_on_errors": true,
+    "metrics_retention_days": 90
+  },
+  "security": {
+    "validate_inputs": true,
+    "sanitize_content": true,
+    "max_content_length": 100000,
+    "max_metadata_size": 10000,
+    "rate_limiting": false,
+    "access_control": false,
+    "audit_logging": false
+  },
+  "analytics": {
+    "track_memory_patterns": true,
+    "track_access_patterns": true,
+    "generate_insights": true,
+    "memory_usage_reports": true,
+    "session_analytics": true,
+    "popular_memories": true,
+    "retention_analysis": true
+  },
+  "integrations": {
+    "vector_store": {
+      "enabled": false,
+      "endpoint": "http://localhost:8003",
+      "collection": "memories"
+    },
+    "llm_provider": {
+      "enabled": false,
+      "endpoint": "http://localhost:8002",
+      "summarization": true
+    },
+    "external_backup": {
+      "enabled": false,
+      "type": "s3",
+      "bucket": null,
+      "prefix": "memory-backups/"
+    }
+  },
+  "development": {
+    "debug_mode": false,
+    "log_queries": false,
+    "log_memory_operations": false,
+    "benchmark_mode": false,
+    "test_data": {
+      "create_sample_data": false,
+      "sample_sessions": 5,
+      "sample_memories_per_session": 20
+    }
+  }
+}

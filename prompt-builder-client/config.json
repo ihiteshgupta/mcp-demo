@@ -1,0 +1,500 @@
+{
+  "app": {
+    "name": "Prompt Builder Client",
+    "version": "1.0.0",
+    "description": "AI-powered prompt engineering with MCP integration",
+    "host": "localhost",
+    "port": 3001,
+    "debug": false,
+    "auto_open_browser": true
+  },
+  "mcp_servers": {
+    "llm_provider": {
+      "name": "LLM Provider",
+      "description": "Multi-source LLM provider with AWS Bedrock support",
+      "host": "localhost",
+      "port": 8002,
+      "transport": "http",
+      "enabled": true,
+      "priority": 1,
+      "tools": [
+        "generate_text",
+        "list_models",
+        "get_usage_metrics",
+        "optimize_model_selection"
+      ],
+      "models": {
+        "anthropic.claude-3-5-sonnet-20241022-v2:0": {
+          "name": "Claude 3.5 Sonnet",
+          "provider": "aws_bedrock",
+          "max_tokens": 8192,
+          "context_window": 200000,
+          "supports_streaming": true,
+          "supports_functions": true,
+          "cost_per_1k_input": 3.0,
+          "cost_per_1k_output": 15.0,
+          "recommended_for": ["complex_reasoning", "creative_writing", "analysis"]
+        },
+        "anthropic.claude-3-haiku-20240307-v1:0": {
+          "name": "Claude 3 Haiku",
+          "provider": "aws_bedrock",
+          "max_tokens": 4096,
+          "context_window": 200000,
+          "supports_streaming": true,
+          "supports_functions": true,
+          "cost_per_1k_input": 0.25,
+          "cost_per_1k_output": 1.25,
+          "recommended_for": ["quick_tasks", "simple_prompts", "fast_generation"]
+        },
+        "amazon.titan-text-premier-v1:0": {
+          "name": "Amazon Titan Text",
+          "provider": "aws_bedrock",
+          "max_tokens": 4096,
+          "context_window": 32000,
+          "supports_streaming": true,
+          "supports_functions": false,
+          "cost_per_1k_input": 0.5,
+          "cost_per_1k_output": 1.5,
+          "recommended_for": ["general_purpose", "cost_effective"]
+        }
+      }
+    },
+    "sequential_thinker": {
+      "name": "Sequential Thinking",
+      "description": "Structured reasoning and step-by-step thinking",
+      "host": "localhost",
+      "port": 8001,
+      "transport": "http",
+      "enabled": true,
+      "priority": 2,
+      "tools": [
+        "create_thinking_chain",
+        "add_thinking_step",
+        "generate_sequential_thinking_prompt",
+        "validate_thinking_chain",
+        "create_business_rule_thinking_prompt"
+      ],
+      "thinking_types": {
+        "problem_solving": {
+          "name": "Problem Solving",
+          "description": "General problem-solving approach",
+          "steps": [
+            "Problem Analysis",
+            "Solution Planning",
+            "Implementation Design",
+            "Validation and Testing",
+            "Final Solution"
+          ]
+        },
+        "creative_process": {
+          "name": "Creative Process",
+          "description": "Structured creative thinking",
+          "steps": [
+            "Creative Exploration",
+            "Idea Generation",
+            "Concept Development",
+            "Creative Refinement",
+            "Final Creation"
+          ]
+        },
+        "analytical_thinking": {
+          "name": "Analytical Thinking",
+          "description": "Systematic analysis approach",
+          "steps": [
+            "Data Gathering",
+            "Pattern Recognition",
+            "Hypothesis Formation",
+            "Evidence Evaluation",
+            "Conclusion Development"
+          ]
+        }
+      }
+    },
+    "vector_store": {
+      "name": "Vector Store",
+      "description": "Vector storage and semantic search",
+      "host": "localhost",
+      "port": 8003,
+      "transport": "http",
+      "enabled": false,
+      "priority": 3,
+      "tools": [
+        "create_collection",
+        "add_documents",
+        "search_vectors",
+        "analyze_collection"
+      ]
+    },
+    "memory": {
+      "name": "Memory Management",
+      "description": "Persistent memory and session management",
+      "host": "localhost",
+      "port": 8004,
+      "transport": "http",
+      "enabled": false,
+      "priority": 4,
+      "tools": [
+        "create_session",
+        "store_memory",
+        "search_memory",
+        "get_session_memories"
+      ]
+    },
+    "web_fetch": {
+      "name": "Web Fetch",
+      "description": "Web content fetching and processing",
+      "host": "localhost",
+      "port": 8005,
+      "transport": "http",
+      "enabled": false,
+      "priority": 5,
+      "tools": [
+        "fetch_url",
+        "process_url",
+        "bulk_fetch",
+        "extract_links"
+      ]
+    }
+  },
+  "prompt_generation": {
+    "default_settings": {
+      "use_sequential_thinking": true,
+      "model_preference": "auto",
+      "max_tokens": 2000,
+      "temperature": 0.7,
+      "top_p": 0.9,
+      "include_examples": true,
+      "optimize_for_clarity": true
+    },
+    "prompt_types": {
+      "general": {
+        "name": "General Purpose",
+        "description": "Versatile prompts for general tasks",
+        "thinking_steps": [
+          "Understand Requirements",
+          "Design Prompt Structure",
+          "Optimize for Clarity"
+        ],
+        "template_priority": ["general", "explanation"]
+      },
+      "creative": {
+        "name": "Creative Writing",
+        "description": "Prompts for creative and artistic tasks",
+        "thinking_steps": [
+          "Analyze Creative Requirements",
+          "Design Creative Framework",
+          "Add Examples and Context"
+        ],
+        "template_priority": ["creative_writing", "general"]
+      },
+      "analytical": {
+        "name": "Analytical",
+        "description": "Prompts for analysis and reasoning",
+        "thinking_steps": [
+          "Define Analysis Scope",
+          "Structure Analytical Process",
+          "Define Output Format"
+        ],
+        "template_priority": ["analysis", "general"]
+      },
+      "code": {
+        "name": "Code Generation",
+        "description": "Prompts for programming tasks",
+        "thinking_steps": [
+          "Understand Technical Requirements",
+          "Design Code Structure",
+          "Specify Implementation Details"
+        ],
+        "template_priority": ["code_generation", "general"]
+      },
+      "explanation": {
+        "name": "Explanation",
+        "description": "Prompts for teaching and explaining",
+        "thinking_steps": [
+          "Analyze Learning Objectives",
+          "Structure Educational Content",
+          "Add Examples and Exercises"
+        ],
+        "template_priority": ["explanation", "general"]
+      }
+    },
+    "optimization_goals": {
+      "clarity": {
+        "name": "Improve Clarity",
+        "description": "Make the prompt clearer and more specific",
+        "weight": 1.0
+      },
+      "conciseness": {
+        "name": "Increase Conciseness",
+        "description": "Make the prompt more concise without losing meaning",
+        "weight": 0.8
+      },
+      "creativity": {
+        "name": "Enhance Creativity",
+        "description": "Encourage more creative and diverse responses",
+        "weight": 0.9
+      },
+      "accuracy": {
+        "name": "Improve Accuracy",
+        "description": "Increase the accuracy and reliability of responses",
+        "weight": 1.0
+      },
+      "engagement": {
+        "name": "Boost Engagement",
+        "description": "Make the prompt more engaging and interesting",
+        "weight": 0.7
+      },
+      "specificity": {
+        "name": "Add Specificity",
+        "description": "Add more specific instructions and constraints",
+        "weight": 0.9
+      }
+    }
+  },
+  "templates": {
+    "creative_writing": {
+      "name": "Creative Writing",
+      "description": "Template for creative writing prompts",
+      "category": "creative",
+      "template": "Write a {genre} {format} about {topic}. The {format} should be approximately {length} and target {audience}. Include the following elements: {elements}. Write in a {style} style with {tone} tone.",
+      "variables": {
+        "genre": {
+          "type": "select",
+          "options": ["fiction", "fantasy", "sci-fi", "mystery", "romance", "thriller", "historical"],
+          "default": "fiction"
+        },
+        "format": {
+          "type": "select", 
+          "options": ["story", "poem", "script", "dialogue", "monologue"],
+          "default": "story"
+        },
+        "topic": {
+          "type": "text",
+          "placeholder": "e.g., time travel, friendship, adventure",
+          "required": true
+        },
+        "length": {
+          "type": "select",
+          "options": ["short (500 words)", "medium (1000 words)", "long (2000+ words)"],
+          "default": "medium (1000 words)"
+        },
+        "audience": {
+          "type": "select",
+          "options": ["children", "young adults", "adults", "general audience"],
+          "default": "general audience"
+        },
+        "elements": {
+          "type": "text",
+          "placeholder": "e.g., plot twist, character development, dialogue",
+          "required": false
+        },
+        "style": {
+          "type": "select",
+          "options": ["descriptive", "narrative", "conversational", "formal", "poetic"],
+          "default": "narrative"
+        },
+        "tone": {
+          "type": "select",
+          "options": ["serious", "humorous", "dramatic", "lighthearted", "suspenseful"],
+          "default": "lighthearted"
+        }
+      }
+    },
+    "analysis": {
+      "name": "Analysis",
+      "description": "Template for analytical prompts",
+      "category": "analytical",
+      "template": "Analyze {subject} focusing on {aspects}. Use {methodology} methodology to examine {data_sources}. Address the following questions: {questions}. Present your analysis in {format} format with {depth} level of detail.",
+      "variables": {
+        "subject": {
+          "type": "text",
+          "placeholder": "e.g., market trends, user behavior, financial data",
+          "required": true
+        },
+        "aspects": {
+          "type": "text",
+          "placeholder": "e.g., patterns, trends, correlations, anomalies",
+          "required": true
+        },
+        "methodology": {
+          "type": "select",
+          "options": ["quantitative", "qualitative", "mixed-methods", "comparative", "statistical"],
+          "default": "mixed-methods"
+        },
+        "data_sources": {
+          "type": "text",
+          "placeholder": "e.g., surveys, interviews, documents, databases",
+          "required": false
+        },
+        "questions": {
+          "type": "text",
+          "placeholder": "e.g., What are the key trends? What factors influence...?",
+          "required": true
+        },
+        "format": {
+          "type": "select",
+          "options": ["report", "summary", "presentation", "dashboard", "narrative"],
+          "default": "report"
+        },
+        "depth": {
+          "type": "select",
+          "options": ["high-level overview", "detailed analysis", "comprehensive study"],
+          "default": "detailed analysis"
+        }
+      }
+    },
+    "code_generation": {
+      "name": "Code Generation",
+      "description": "Template for code generation prompts",
+      "category": "code",
+      "template": "Write {language} code to {task}. Requirements: {requirements}. The code should follow {standards} coding standards and include {features}. Provide {documentation} and handle {error_handling}.",
+      "variables": {
+        "language": {
+          "type": "select",
+          "options": ["Python", "JavaScript", "TypeScript", "Java", "C++", "Go", "Rust", "SQL"],
+          "default": "Python"
+        },
+        "task": {
+          "type": "text",
+          "placeholder": "e.g., create a REST API, process data, implement algorithm",
+          "required": true
+        },
+        "requirements": {
+          "type": "text",
+          "placeholder": "e.g., must be efficient, handle large datasets, be scalable",
+          "required": true
+        },
+        "standards": {
+          "type": "select",
+          "options": ["PEP 8", "Google", "Airbnb", "Standard", "company-specific"],
+          "default": "Standard"
+        },
+        "features": {
+          "type": "text",
+          "placeholder": "e.g., error handling, logging, testing, documentation",
+          "required": false
+        },
+        "documentation": {
+          "type": "select",
+          "options": ["inline comments", "docstrings", "README", "full documentation"],
+          "default": "docstrings"
+        },
+        "error_handling": {
+          "type": "select",
+          "options": ["basic", "comprehensive", "graceful degradation", "fail-fast"],
+          "default": "comprehensive"
+        }
+      }
+    },
+    "explanation": {
+      "name": "Explanation",
+      "description": "Template for explanation prompts",
+      "category": "explanation",
+      "template": "Explain {concept} to {audience} in {style} manner. Cover {topics} and use {examples} to illustrate key points. The explanation should be {length} and assume {background_knowledge} level of prior knowledge.",
+      "variables": {
+        "concept": {
+          "type": "text",
+          "placeholder": "e.g., machine learning, quantum physics, blockchain",
+          "required": true
+        },
+        "audience": {
+          "type": "select",
+          "options": ["beginners", "students", "professionals", "experts", "general public"],
+          "default": "beginners"
+        },
+        "style": {
+          "type": "select",
+          "options": ["simple", "detailed", "conversational", "technical", "story-like"],
+          "default": "conversational"
+        },
+        "topics": {
+          "type": "text",
+          "placeholder": "e.g., basic principles, applications, benefits, challenges",
+          "required": true
+        },
+        "examples": {
+          "type": "select",
+          "options": ["real-world examples", "analogies", "case studies", "demonstrations"],
+          "default": "real-world examples"
+        },
+        "length": {
+          "type": "select",
+          "options": ["brief", "moderate", "comprehensive", "in-depth"],
+          "default": "moderate"
+        },
+        "background_knowledge": {
+          "type": "select",
+          "options": ["none", "basic", "intermediate", "advanced"],
+          "default": "basic"
+        }
+      }
+    }
+  },
+  "ui": {
+    "theme": {
+      "primary_color": "#667eea",
+      "secondary_color": "#764ba2",
+      "accent_color": "#f093fb",
+      "success_color": "#10b981",
+      "warning_color": "#f59e0b",
+      "error_color": "#ef4444",
+      "background_color": "#f9fafb",
+      "card_background": "#ffffff"
+    },
+    "features": {
+      "real_time_preview": true,
+      "syntax_highlighting": true,
+      "auto_save": true,
+      "export_formats": ["json", "txt", "md"],
+      "import_support": true,
+      "template_gallery": true,
+      "prompt_history": true,
+      "collaborative_editing": false
+    },
+    "layout": {
+      "sidebar_width": "300px",
+      "main_content_max_width": "1200px",
+      "card_border_radius": "12px",
+      "spacing_unit": "8px"
+    }
+  },
+  "performance": {
+    "cache_prompts": true,
+    "cache_duration_minutes": 30,
+    "max_concurrent_requests": 5,
+    "request_timeout_seconds": 30,
+    "retry_attempts": 3,
+    "retry_delay_seconds": 2
+  },
+  "security": {
+    "validate_inputs": true,
+    "sanitize_outputs": true,
+    "max_prompt_length": 50000,
+    "rate_limiting": {
+      "enabled": false,
+      "requests_per_minute": 60,
+      "burst_limit": 10
+    },
+    "content_filtering": {
+      "enabled": false,
+      "filter_nsfw": false,
+      "filter_harmful": false
+    }
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "json",
+    "file": "prompt_builder.log",
+    "max_size_mb": 10,
+    "backup_count": 5,
+    "include_request_data": false,
+    "include_response_data": false
+  },
+  "analytics": {
+    "track_usage": true,
+    "track_performance": true,
+    "track_errors": true,
+    "retention_days": 30,
+    "export_enabled": true
+  }
+}

@@ -1,0 +1,204 @@
+{
+  "web_fetcher": {
+    "user_agent": "Mozilla/5.0 (compatible; MCP-WebFetch/1.0; +https://github.com/anthropics/mcp-servers)",
+    "max_connections": 100,
+    "max_connections_per_host": 10,
+    "total_timeout": 60,
+    "connect_timeout": 10,
+    "read_timeout": 30,
+    "dns_cache_ttl": 300,
+    "rate_limit_requests": 10,
+    "rate_limit_window": 60,
+    "follow_redirects": true,
+    "max_redirects": 10,
+    "verify_ssl": true,
+    "default_encoding": "utf-8"
+  },
+  "content_processor": {
+    "enable_readability": true,
+    "enable_trafilatura": true,
+    "enable_markdownify": true,
+    "max_content_length": 1000000,
+    "max_links_extract": 100,
+    "max_images_extract": 50,
+    "clean_html": true,
+    "extract_metadata": true
+  },
+  "server": {
+    "name": "Web Fetch MCP Server",
+    "version": "1.0.0",
+    "description": "Production-grade web content fetching and processing",
+    "host": "localhost",
+    "port": 8005,
+    "transport": "stdio"
+  },
+  "features": {
+    "content_fetching": true,
+    "content_processing": true,
+    "bulk_operations": true,
+    "caching": true,
+    "rate_limiting": true,
+    "link_extraction": true,
+    "status_checking": true,
+    "multiple_formats": true
+  },
+  "caching": {
+    "enabled": true,
+    "default_cache_duration": 3600,
+    "max_cache_entries": 1000,
+    "max_cache_size_mb": 100,
+    "auto_cleanup": true,
+    "cleanup_interval_hours": 6
+  },
+  "rate_limiting": {
+    "enabled": true,
+    "default_requests_per_minute": 10,
+    "burst_limit": 20,
+    "per_domain_limiting": true,
+    "respect_robots_txt": false,
+    "crawl_delay": 1.0
+  },
+  "content_types": {
+    "html": {
+      "enabled": true,
+      "processing_modes": ["raw", "extract", "clean", "markdown"],
+      "default_mode": "extract",
+      "extract_links": true,
+      "extract_images": true,
+      "extract_metadata": true
+    },
+    "json": {
+      "enabled": true,
+      "pretty_format": true,
+      "validate_structure": true,
+      "max_depth": 10
+    },
+    "xml": {
+      "enabled": true,
+      "validate_structure": true,
+      "pretty_format": true
+    },
+    "rss": {
+      "enabled": true,
+      "max_entries": 50,
+      "extract_full_content": false,
+      "follow_entry_links": false
+    },
+    "text": {
+      "enabled": true,
+      "detect_encoding": true,
+      "normalize_whitespace": true
+    }
+  },
+  "processing_options": {
+    "remove_scripts": true,
+    "remove_styles": true,
+    "remove_comments": true,
+    "preserve_links": true,
+    "preserve_images": true,
+    "convert_relative_urls": true,
+    "extract_social_metadata": true,
+    "extract_structured_data": true
+  },
+  "security": {
+    "validate_urls": true,
+    "block_private_ips": true,
+    "block_localhost": false,
+    "allowed_schemes": ["http", "https"],
+    "blocked_domains": [],
+    "max_file_size": 50000000,
+    "scan_content": false,
+    "filter_content": false
+  },
+  "performance": {
+    "max_concurrent_requests": 20,
+    "request_delay_ms": 100,
+    "retry_attempts": 3,
+    "retry_delay_seconds": 1,
+    "timeout_multiplier": 1.5,
+    "connection_pool_size": 50
+  },
+  "monitoring": {
+    "track_requests": true,
+    "track_performance": true,
+    "track_errors": true,
+    "track_cache_usage": true,
+    "log_requests": false,
+    "log_responses": false,
+    "metrics_retention_hours": 168
+  },
+  "output_formats": {
+    "json": {
+      "pretty_print": true,
+      "include_metadata": true,
+      "include_statistics": true
+    },
+    "markdown": {
+      "heading_style": "ATX",
+      "bullet_style": "-",
+      "include_links": true,
+      "include_images": true
+    },
+    "text": {
+      "preserve_formatting": true,
+      "normalize_line_endings": true,
+      "max_line_length": 80
+    }
+  },
+  "bulk_operations": {
+    "max_urls": 100,
+    "default_concurrency": 5,
+    "max_concurrency": 20,
+    "default_delay": 1.0,
+    "stop_on_error": false,
+    "batch_size": 10
+  },
+  "advanced_features": {
+    "javascript_rendering": false,
+    "screenshot_capture": false,
+    "pdf_generation": false,
+    "proxy_support": false,
+    "authentication": false,
+    "cookie_handling": true,
+    "session_persistence": false
+  },
+  "proxy": {
+    "enabled": false,
+    "http_proxy": null,
+    "https_proxy": null,
+    "proxy_auth": null,
+    "bypass_list": ["localhost", "127.0.0.1"]
+  },
+  "cookies": {
+    "enabled": true,
+    "persist_cookies": false,
+    "cookie_file": null,
+    "accept_all": false,
+    "respect_policy": true
+  },
+  "headers": {
+    "default_headers": {
+      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+      "Accept-Language": "en-US,en;q=0.5",
+      "Accept-Encoding": "gzip, deflate",
+      "DNT": "1",
+      "Connection": "keep-alive",
+      "Upgrade-Insecure-Requests": "1"
+    },
+    "custom_headers": {},
+    "remove_headers": [],
+    "override_headers": {}
+  },
+  "development": {
+    "debug_mode": false,
+    "log_requests": false,
+    "log_responses": false,
+    "save_raw_content": false,
+    "benchmark_mode": false,
+    "test_urls": [
+      "https://httpbin.org/get",
+      "https://httpbin.org/json",
+      "https://httpbin.org/xml"
+    ]
+  }
+}

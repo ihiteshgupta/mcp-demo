@@ -1,0 +1,197 @@
+{
+  "server": {
+    "name": "Sequential Thinker MCP Server",
+    "version": "1.0.0",
+    "description": "MCP server providing structured sequential thinking capabilities",
+    "host": "localhost",
+    "port": 8001,
+    "transport": "stdio"
+  },
+  "capabilities": {
+    "resources": {
+      "supported": true,
+      "endpoints": [
+        "sequential-thinking://chains",
+        "sequential-thinking://chain/{chain_id}",
+        "sequential-thinking://templates"
+      ]
+    },
+    "tools": {
+      "supported": true,
+      "available": [
+        "create_thinking_chain",
+        "add_thinking_step", 
+        "generate_sequential_thinking_prompt",
+        "build_custom_prompt",
+        "create_business_rule_thinking_prompt",
+        "get_server_info",
+        "validate_thinking_chain"
+      ]
+    },
+    "prompts": {
+      "supported": false,
+      "note": "Prompts are generated dynamically through tools"
+    }
+  },
+  "templates": {
+    "directory": "../mcp-server/templates",
+    "fallback_directory": "./templates",
+    "supported_formats": [
+      "jinja2"
+    ],
+    "builtin_templates": [
+      "sequential_thinking.jinja2",
+      "business_rule_generation.jinja2",
+      "rule_validation.jinja2",
+      "context_search.jinja2"
+    ]
+  },
+  "thinking_chains": {
+    "max_active_chains": 100,
+    "default_step_count": 5,
+    "auto_cleanup": true,
+    "cleanup_interval_hours": 24,
+    "default_steps": [
+      {
+        "name": "Problem Analysis",
+        "description": "Analyze and understand the problem domain",
+        "reasoning": "Break down the problem into key components and identify constraints"
+      },
+      {
+        "name": "Solution Planning",
+        "description": "Develop a systematic approach to solve the problem", 
+        "reasoning": "Create a step-by-step strategy based on problem analysis"
+      },
+      {
+        "name": "Implementation Design",
+        "description": "Design the specific implementation approach",
+        "reasoning": "Detail the concrete steps and methods to execute the solution"
+      },
+      {
+        "name": "Validation and Testing",
+        "description": "Ensure solution correctness and handle edge cases",
+        "reasoning": "Verify the solution works correctly and robustly"
+      },
+      {
+        "name": "Final Solution",
+        "description": "Synthesize previous steps into the complete answer",
+        "reasoning": "Integrate all analysis and design into the final result"
+      }
+    ]
+  },
+  "business_rules": {
+    "thinking_steps": [
+      {
+        "name": "Context Analysis",
+        "description": "Analyze the business domain and constraints",
+        "reasoning": "Understand business context, stakeholders, and operational constraints"
+      },
+      {
+        "name": "Requirements Parsing",
+        "description": "Break down requirements into actionable components",
+        "reasoning": "Extract specific, measurable requirements from business needs"
+      },
+      {
+        "name": "Logic Design", 
+        "description": "Structure conditional logic with when-then patterns",
+        "reasoning": "Create logical flow with clear conditions, actions, and edge cases"
+      },
+      {
+        "name": "Business Optimization",
+        "description": "Optimize for business value while minimizing risks",
+        "reasoning": "Balance revenue generation, customer satisfaction, and operational efficiency"
+      },
+      {
+        "name": "JSON Formatting",
+        "description": "Convert logic into implementable JSON structure",
+        "reasoning": "Create valid, executable business rule format for system integration"
+      }
+    ],
+    "output_format": {
+      "rule_id": "string",
+      "name": "string", 
+      "description": "string",
+      "when": "object",
+      "then": "object",
+      "priority": "HIGH|MEDIUM|LOW",
+      "business_value": "string",
+      "metadata": "object"
+    }
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "json",
+    "include_timestamps": true,
+    "log_file": null,
+    "console_output": true
+  },
+  "validation": {
+    "chain_validation": {
+      "min_steps": 3,
+      "max_steps": 20,
+      "require_reasoning": false,
+      "require_expected_output": false,
+      "completeness_threshold": 0.8
+    },
+    "step_validation": {
+      "max_description_length": 500,
+      "max_reasoning_length": 1000,
+      "max_expected_output_length": 500
+    }
+  },
+  "performance": {
+    "max_concurrent_chains": 50,
+    "chain_timeout_minutes": 60,
+    "template_cache_size": 100,
+    "enable_caching": true
+  },
+  "security": {
+    "sanitize_inputs": true,
+    "max_prompt_length": 10000,
+    "allow_template_creation": false,
+    "restrict_file_access": true
+  },
+  "integration": {
+    "mcp_protocol_version": "2024-11-05",
+    "client_compatibility": [
+      "Claude Desktop",
+      "Custom MCP Clients",
+      "VS Code Extensions"
+    ],
+    "supported_transports": [
+      "stdio",
+      "sse"
+    ]
+  },
+  "examples": {
+    "thinking_chains": [
+      {
+        "id": "problem_solving",
+        "description": "General problem solving chain",
+        "use_case": "Any complex problem requiring structured analysis"
+      },
+      {
+        "id": "business_analysis",
+        "description": "Business problem analysis chain", 
+        "use_case": "Business strategy and operational problems"
+      },
+      {
+        "id": "technical_design",
+        "description": "Technical solution design chain",
+        "use_case": "Software architecture and system design"
+      }
+    ],
+    "templates": [
+      {
+        "name": "research_analysis.jinja2",
+        "description": "Template for research and analysis tasks",
+        "variables": ["topic", "scope", "methodology"]
+      },
+      {
+        "name": "decision_making.jinja2",
+        "description": "Template for structured decision making",
+        "variables": ["decision", "criteria", "alternatives", "constraints"]
+      }
+    ]
+  }
+}

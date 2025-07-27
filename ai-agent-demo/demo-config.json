@@ -1,0 +1,400 @@
+{
+  "demo": {
+    "name": "AI Agent Creation Demo",
+    "version": "1.0.0",
+    "description": "Interactive demonstration of creating AI agents using MCP ecosystem",
+    "host": "localhost",
+    "port": 3002
+  },
+  "mcp_servers": {
+    "prompt-builder": {
+      "name": "Prompt Builder MCP Server",
+      "description": "Main orchestrator for AI agent creation",
+      "host": "localhost",
+      "port": 8006,
+      "enabled": true,
+      "priority": 1,
+      "tools": [
+        "create_prompt_building_session",
+        "define_agent_context",
+        "configure_memory_settings",
+        "configure_sequential_thinking",
+        "build_agent_prompt",
+        "create_ai_agent",
+        "get_session_status",
+        "get_mcp_servers_status"
+      ]
+    },
+    "llm-provider": {
+      "name": "LLM Provider",
+      "description": "Multi-source LLM provider with AWS Bedrock support",
+      "host": "localhost",
+      "port": 8002,
+      "enabled": true,
+      "priority": 2,
+      "direct_access": false,
+      "note": "Accessed through Prompt Builder"
+    },
+    "sequential-thinker": {
+      "name": "Sequential Thinker",
+      "description": "Structured reasoning and step-by-step thinking",
+      "host": "localhost",
+      "port": 8001,
+      "enabled": true,
+      "priority": 3,
+      "direct_access": false,
+      "note": "Accessed through Prompt Builder"
+    },
+    "memory": {
+      "name": "Memory Management",
+      "description": "Persistent memory and session management",
+      "host": "localhost",
+      "port": 8004,
+      "enabled": true,
+      "priority": 4,
+      "direct_access": false,
+      "note": "Accessed through Prompt Builder"
+    }
+  },
+  "demo_flow": {
+    "steps": [
+      {
+        "id": "start",
+        "name": "Welcome & Overview",
+        "description": "Introduction to the AI agent creation process",
+        "duration_estimate": "1 minute",
+        "user_input_required": false
+      },
+      {
+        "id": "define_context",
+        "name": "Define Agent Context",
+        "description": "Specify the agent's purpose, domain, and target audience",
+        "duration_estimate": "2-3 minutes",
+        "user_input_required": true,
+        "required_fields": ["agent_name", "agent_description", "domain", "use_case"],
+        "optional_fields": ["target_audience", "additional_context"]
+      },
+      {
+        "id": "configure_memory",
+        "name": "Configure Memory Settings",
+        "description": "Set up how the agent will remember and manage information",
+        "duration_estimate": "1-2 minutes",
+        "user_input_required": true,
+        "required_fields": ["memory_type"],
+        "optional_fields": ["persistence", "memory_size_limit", "retention_policy", "enable_semantic_search"]
+      },
+      {
+        "id": "configure_thinking",
+        "name": "Configure Sequential Thinking",
+        "description": "Configure how the agent will reason and think through problems",
+        "duration_estimate": "1-2 minutes",
+        "user_input_required": true,
+        "required_fields": ["thinking_style"],
+        "optional_fields": ["enable_chain_of_thought", "thinking_depth", "reasoning_steps", "enable_self_reflection"]
+      },
+      {
+        "id": "build_prompt",
+        "name": "Build Agent Prompt",
+        "description": "Generate the comprehensive prompt that defines the agent's behavior",
+        "duration_estimate": "1-2 minutes",
+        "user_input_required": false,
+        "automated": true
+      },
+      {
+        "id": "create_agent",
+        "name": "Create & Test Agent",
+        "description": "Finalize the agent creation and run initial tests",
+        "duration_estimate": "1-2 minutes",
+        "user_input_required": false,
+        "automated": true
+      },
+      {
+        "id": "showcase",
+        "name": "Agent Showcase",
+        "description": "Demonstrate the created agent's capabilities",
+        "duration_estimate": "2-3 minutes",
+        "user_input_required": true,
+        "interactive": true
+      }
+    ],
+    "total_estimated_time": "8-15 minutes"
+  },
+  "agent_templates": {
+    "domains": {
+      "customer_service": {
+        "name": "Customer Service",
+        "description": "AI agents for customer support and service interactions",
+        "icon": "fas fa-headset",
+        "color": "#3b82f6",
+        "use_cases": [
+          {
+            "id": "support_chat",
+            "name": "Live Chat Support",
+            "description": "Real-time customer support chat assistant"
+          },
+          {
+            "id": "faq_assistant",
+            "name": "FAQ Assistant",
+            "description": "Automated responses to frequently asked questions"
+          },
+          {
+            "id": "complaint_handler",
+            "name": "Complaint Handler",
+            "description": "Specialized agent for handling customer complaints"
+          }
+        ],
+        "suggested_settings": {
+          "thinking_style": "empathetic",
+          "memory_type": "conversation",
+          "reasoning_steps": 3
+        }
+      },
+      "education": {
+        "name": "Education & Training",
+        "description": "AI agents for educational and learning purposes",
+        "icon": "fas fa-graduation-cap",
+        "color": "#10b981",
+        "use_cases": [
+          {
+            "id": "tutor",
+            "name": "Personal Tutor",
+            "description": "One-on-one tutoring and learning assistance"
+          },
+          {
+            "id": "course_assistant",
+            "name": "Course Assistant",
+            "description": "Support for online courses and training programs"
+          },
+          {
+            "id": "skill_assessment",
+            "name": "Skill Assessment",
+            "description": "Evaluate and provide feedback on skills and knowledge"
+          }
+        ],
+        "suggested_settings": {
+          "thinking_style": "pedagogical",
+          "memory_type": "learning_progress",
+          "reasoning_steps": 4
+        }
+      },
+      "business_analysis": {
+        "name": "Business Analysis",
+        "description": "AI agents for business intelligence and data analysis",
+        "icon": "fas fa-chart-line",
+        "color": "#f59e0b",
+        "use_cases": [
+          {
+            "id": "data_analyst",
+            "name": "Data Analyst",
+            "description": "Analyze business data and generate insights"
+          },
+          {
+            "id": "report_generator",
+            "name": "Report Generator",
+            "description": "Create comprehensive business reports"
+          },
+          {
+            "id": "strategy_advisor",
+            "name": "Strategy Advisor",
+            "description": "Provide strategic business recommendations"
+          }
+        ],
+        "suggested_settings": {
+          "thinking_style": "analytical",
+          "memory_type": "analytical_context",
+          "reasoning_steps": 5
+        }
+      },
+      "creative_writing": {
+        "name": "Creative Writing",
+        "description": "AI agents for creative content generation and writing",
+        "icon": "fas fa-pen-fancy",
+        "color": "#8b5cf6",
+        "use_cases": [
+          {
+            "id": "content_creator",
+            "name": "Content Creator",
+            "description": "Generate creative content for various media"
+          },
+          {
+            "id": "story_writer",
+            "name": "Story Writer",
+            "description": "Create engaging stories and narratives"
+          },
+          {
+            "id": "copywriter",
+            "name": "Marketing Copywriter",
+            "description": "Write compelling marketing and advertising copy"
+          }
+        ],
+        "suggested_settings": {
+          "thinking_style": "creative",
+          "memory_type": "creative_context",
+          "reasoning_steps": 3
+        }
+      },
+      "technical_support": {
+        "name": "Technical Support",
+        "description": "AI agents for technical assistance and troubleshooting",
+        "icon": "fas fa-tools",
+        "color": "#ef4444",
+        "use_cases": [
+          {
+            "id": "troubleshooter",
+            "name": "Technical Troubleshooter",
+            "description": "Diagnose and resolve technical issues"
+          },
+          {
+            "id": "documentation_helper",
+            "name": "Documentation Assistant",
+            "description": "Help users understand technical documentation"
+          },
+          {
+            "id": "code_reviewer",
+            "name": "Code Review Assistant",
+            "description": "Review and provide feedback on code"
+          }
+        ],
+        "suggested_settings": {
+          "thinking_style": "systematic",
+          "memory_type": "technical_context",
+          "reasoning_steps": 4
+        }
+      }
+    }
+  },
+  "configuration_options": {
+    "memory_types": [
+      {
+        "id": "conversation",
+        "name": "Conversation Memory",
+        "description": "Remembers the flow of conversation and context",
+        "best_for": ["customer_service", "education", "general_purpose"]
+      },
+      {
+        "id": "learning_progress",
+        "name": "Learning Progress Memory",
+        "description": "Tracks learning milestones and skill development",
+        "best_for": ["education", "training", "skill_assessment"]
+      },
+      {
+        "id": "analytical_context",
+        "name": "Analytical Context Memory",
+        "description": "Maintains data context and analytical findings",
+        "best_for": ["business_analysis", "data_science", "research"]
+      },
+      {
+        "id": "creative_context",
+        "name": "Creative Context Memory",
+        "description": "Preserves creative themes and narrative continuity",
+        "best_for": ["creative_writing", "content_creation", "storytelling"]
+      },
+      {
+        "id": "technical_context",
+        "name": "Technical Context Memory",
+        "description": "Maintains technical specifications and troubleshooting history",
+        "best_for": ["technical_support", "engineering", "development"]
+      }
+    ],
+    "thinking_styles": [
+      {
+        "id": "analytical",
+        "name": "Analytical Thinking",
+        "description": "Systematic, logical approach to problem-solving",
+        "characteristics": ["data-driven", "methodical", "evidence-based"]
+      },
+      {
+        "id": "creative",
+        "name": "Creative Thinking",
+        "description": "Innovative and imaginative approach to challenges",
+        "characteristics": ["open-minded", "divergent", "original"]
+      },
+      {
+        "id": "empathetic",
+        "name": "Empathetic Thinking",
+        "description": "Human-centered approach with emotional intelligence",
+        "characteristics": ["understanding", "compassionate", "person-focused"]
+      },
+      {
+        "id": "systematic",
+        "name": "Systematic Thinking",
+        "description": "Structured, step-by-step problem resolution",
+        "characteristics": ["organized", "thorough", "process-oriented"]
+      },
+      {
+        "id": "pedagogical",
+        "name": "Pedagogical Thinking",
+        "description": "Teaching-focused approach with learning optimization",
+        "characteristics": ["educational", "patient", "adaptive"]
+      }
+    ],
+    "target_audiences": [
+      {
+        "id": "general",
+        "name": "General Public",
+        "description": "Everyday users with varying technical backgrounds"
+      },
+      {
+        "id": "technical",
+        "name": "Technical Professionals",
+        "description": "Engineers, developers, and technical specialists"
+      },
+      {
+        "id": "business",
+        "name": "Business Professionals",
+        "description": "Managers, analysts, and business decision-makers"
+      },
+      {
+        "id": "students",
+        "name": "Students & Learners",
+        "description": "People in educational or training contexts"
+      },
+      {
+        "id": "experts",
+        "name": "Domain Experts",
+        "description": "Subject matter experts in specific fields"
+      }
+    ]
+  },
+  "demo_examples": {
+    "sample_agents": [
+      {
+        "name": "CustomerCare Pro",
+        "domain": "customer_service",
+        "use_case": "support_chat",
+        "description": "A professional customer service agent specializing in resolving customer inquiries and complaints with empathy and efficiency."
+      },
+      {
+        "name": "DataInsight Analyst",
+        "domain": "business_analysis",
+        "use_case": "data_analyst",
+        "description": "An analytical agent that helps businesses understand their data, identify trends, and make data-driven decisions."
+      },
+      {
+        "name": "CreativeGenius Writer",
+        "domain": "creative_writing",
+        "use_case": "content_creator",
+        "description": "A creative writing assistant that helps generate engaging content, stories, and marketing copy with originality and flair."
+      }
+    ]
+  },
+  "ui_settings": {
+    "theme": {
+      "primary_color": "#3b82f6",
+      "secondary_color": "#8b5cf6",
+      "success_color": "#10b981",
+      "warning_color": "#f59e0b",
+      "error_color": "#ef4444"
+    },
+    "animations": {
+      "step_transitions": true,
+      "loading_indicators": true,
+      "progress_animations": true
+    },
+    "layout": {
+      "show_progress_sidebar": true,
+      "show_mcp_status": true,
+      "enable_tooltips": true
+    }
+  }
+}

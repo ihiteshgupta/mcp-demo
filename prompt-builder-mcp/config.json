@@ -1,0 +1,187 @@
+{
+  "server": {
+    "name": "Prompt Builder MCP Server",
+    "version": "1.0.0",
+    "description": "MCP server for intelligent AI agent creation through structured prompt building",
+    "host": "localhost",
+    "port": 8006,
+    "log_level": "INFO"
+  },
+  "mcp_servers": {
+    "llm-provider": {
+      "name": "LLM Provider",
+      "description": "Multi-source LLM provider with AWS Bedrock support",
+      "host": "localhost",
+      "port": 8002,
+      "enabled": true,
+      "priority": 1,
+      "tools": [
+        "generate_text",
+        "list_models",
+        "get_usage_metrics",
+        "optimize_model_selection"
+      ],
+      "connection_timeout": 30,
+      "retry_attempts": 3
+    },
+    "sequential-thinker": {
+      "name": "Sequential Thinker",
+      "description": "Structured reasoning and step-by-step thinking",
+      "host": "localhost",
+      "port": 8001,
+      "enabled": true,
+      "priority": 2,
+      "tools": [
+        "create_thinking_chain",
+        "add_thinking_step",
+        "generate_sequential_thinking_prompt",
+        "validate_thinking_chain"
+      ],
+      "connection_timeout": 30,
+      "retry_attempts": 3
+    },
+    "memory": {
+      "name": "Memory Management",
+      "description": "Persistent memory and session management",
+      "host": "localhost",
+      "port": 8004,
+      "enabled": true,
+      "priority": 3,
+      "tools": [
+        "create_session",
+        "store_memory",
+        "search_memory",
+        "get_session_memories"
+      ],
+      "connection_timeout": 30,
+      "retry_attempts": 3
+    },
+    "vector-store": {
+      "name": "Vector Store",
+      "description": "Vector storage and semantic search",
+      "host": "localhost",
+      "port": 8003,
+      "enabled": false,
+      "priority": 4,
+      "tools": [
+        "create_collection",
+        "add_documents",
+        "search_vectors",
+        "analyze_collection"
+      ],
+      "connection_timeout": 30,
+      "retry_attempts": 3
+    }
+  },
+  "agent_defaults": {
+    "prompt_building": {
+      "thinking_style": "analytical",
+      "memory_type": "conversation",
+      "reasoning_steps": 5,
+      "enable_chain_of_thought": true,
+      "enable_self_reflection": true,
+      "optimization_goals": ["clarity", "accuracy", "engagement"]
+    },
+    "llm_settings": {
+      "default_model": "anthropic.claude-3-5-sonnet-20241022-v2:0",
+      "temperature": 0.7,
+      "max_tokens": 2000,
+      "top_p": 0.9
+    },
+    "memory_settings": {
+      "persistence": true,
+      "size_limit": 10000,
+      "retention_policy": "fifo",
+      "enable_semantic_search": true
+    }
+  },
+  "session_management": {
+    "max_active_sessions": 100,
+    "session_timeout_minutes": 60,
+    "auto_cleanup": true,
+    "save_completed_sessions": true
+  },
+  "templates": {
+    "domains": {
+      "customer_service": {
+        "name": "Customer Service",
+        "description": "AI agents for customer support and service",
+        "default_use_cases": ["support_chat", "FAQ", "complaint_handling"],
+        "suggested_thinking_style": "empathetic"
+      },
+      "education": {
+        "name": "Education & Training",
+        "description": "AI agents for educational and training purposes",
+        "default_use_cases": ["tutoring", "course_assistance", "skill_assessment"],
+        "suggested_thinking_style": "pedagogical"
+      },
+      "business_analysis": {
+        "name": "Business Analysis",
+        "description": "AI agents for business intelligence and analysis",
+        "default_use_cases": ["data_analysis", "report_generation", "strategic_planning"],
+        "suggested_thinking_style": "analytical"
+      },
+      "creative_writing": {
+        "name": "Creative Writing",
+        "description": "AI agents for creative content generation",
+        "default_use_cases": ["content_creation", "storytelling", "copywriting"],
+        "suggested_thinking_style": "creative"
+      },
+      "technical_support": {
+        "name": "Technical Support",
+        "description": "AI agents for technical assistance and troubleshooting",
+        "default_use_cases": ["troubleshooting", "documentation", "code_review"],
+        "suggested_thinking_style": "systematic"
+      }
+    },
+    "use_cases": {
+      "conversational_ai": {
+        "name": "Conversational AI Assistant",
+        "description": "General-purpose conversational agent",
+        "required_capabilities": ["natural_conversation", "context_awareness", "helpful_responses"]
+      },
+      "domain_expert": {
+        "name": "Domain Expert Assistant",
+        "description": "Specialized expert in a specific domain",
+        "required_capabilities": ["domain_knowledge", "expert_advice", "detailed_explanations"]
+      },
+      "task_automation": {
+        "name": "Task Automation Agent",
+        "description": "Agent focused on automating specific tasks",
+        "required_capabilities": ["task_execution", "workflow_management", "result_validation"]
+      },
+      "creative_collaborator": {
+        "name": "Creative Collaboration Agent",
+        "description": "Agent for creative and collaborative work",
+        "required_capabilities": ["creative_thinking", "brainstorming", "iterative_improvement"]
+      }
+    }
+  },
+  "validation": {
+    "required_fields": {
+      "agent_name": {"min_length": 3, "max_length": 100},
+      "agent_description": {"min_length": 10, "max_length": 500},
+      "domain": {"allowed_values": ["customer_service", "education", "business_analysis", "creative_writing", "technical_support", "general"]},
+      "use_case": {"min_length": 5, "max_length": 200}
+    },
+    "prompt_quality": {
+      "min_length": 100,
+      "max_length": 10000,
+      "required_sections": ["role", "guidelines", "context"]
+    }
+  },
+  "monitoring": {
+    "track_sessions": true,
+    "track_agent_creation": true,
+    "track_performance": true,
+    "metrics_retention_days": 30
+  },
+  "security": {
+    "validate_inputs": true,
+    "sanitize_prompts": true,
+    "rate_limiting": {
+      "enabled": false,
+      "requests_per_minute": 60
+    }
+  }
+}

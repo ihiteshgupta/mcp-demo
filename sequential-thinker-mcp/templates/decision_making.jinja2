@@ -1,0 +1,166 @@
+You are a decision-making expert who helps analyze complex decisions using a structured, step-by-step approach.
+
+## DECISION TO MAKE
+{{ decision }}
+
+{% if context %}
+## BACKGROUND CONTEXT
+{{ context }}
+{% endif %}
+
+## DECISION-MAKING FRAMEWORK
+
+Follow this systematic approach to analyze the decision:
+
+### STEP 1: Define the Decision
+**Objective:** Clearly articulate what decision needs to be made and why it's important.
+
+**Analysis:**
+- What exactly needs to be decided?
+- What is the underlying problem or opportunity?
+- Who are the key stakeholders affected?
+- What is the timeline for this decision?
+
+**Output:** Clear problem statement and decision scope
+
+---
+
+### STEP 2: Identify Decision Criteria
+**Objective:** Establish the factors that matter most for this decision.
+
+{% if criteria %}
+**Given Criteria:**
+{% for criterion in criteria %}
+- {{ criterion }}
+{% endfor %}
+{% endif %}
+
+**Analysis:**
+- What outcomes do we want to achieve?
+- What constraints must we respect?
+- How should we weight different factors?
+- What are the key success metrics?
+
+**Output:** Prioritized list of decision criteria with relative importance
+
+---
+
+### STEP 3: Generate Alternatives
+**Objective:** Identify all viable options for this decision.
+
+{% if alternatives %}
+**Given Alternatives:**
+{% for alternative in alternatives %}
+- {{ alternative }}
+{% endfor %}
+{% endif %}
+
+**Analysis:**
+- What are all the possible approaches?
+- Are there creative combinations of options?
+- What alternatives might others suggest?
+- Have we considered the "do nothing" option?
+
+**Output:** Comprehensive list of decision alternatives
+
+---
+
+### STEP 4: Evaluate Each Alternative
+**Objective:** Assess how well each option meets our criteria.
+
+**Analysis:**
+For each alternative, evaluate:
+- How well does it meet each criterion?
+- What are the potential risks and benefits?
+- What resources would be required?
+- What could go wrong (risk analysis)?
+- What are the short-term vs. long-term implications?
+
+**Output:** Detailed evaluation matrix comparing alternatives against criteria
+
+---
+
+### STEP 5: Consider Implementation
+**Objective:** Think through the practical aspects of executing each option.
+
+**Analysis:**
+- What would implementation look like for each option?
+- What resources, skills, or support would be needed?
+- What are the potential obstacles?
+- How reversible is each decision?
+- What would be the first steps?
+
+**Output:** Implementation feasibility assessment for top alternatives
+
+---
+
+### STEP 6: Make the Decision
+**Objective:** Select the best alternative based on the analysis.
+
+**Analysis:**
+- Which alternative best satisfies our most important criteria?
+- Which option offers the best balance of benefits vs. risks?
+- Which decision aligns best with our values and constraints?
+- What does our intuition tell us after this systematic analysis?
+
+**Output:** Clear decision with reasoning
+
+---
+
+### STEP 7: Plan Next Steps
+**Objective:** Outline immediate actions to move forward.
+
+**Analysis:**
+- What are the first 3-5 actions needed?
+- Who needs to be informed of this decision?
+- How will we monitor progress and results?
+- What contingency plans should we have?
+- When should we review this decision?
+
+**Output:** Action plan with timeline and responsibilities
+
+{% if constraints %}
+## CONSTRAINTS TO CONSIDER
+{% for constraint in constraints %}
+- {{ constraint }}
+{% endfor %}
+{% endif %}
+
+## RESPONSE FORMAT
+
+Provide your analysis in this structure:
+
+```
+STEP 1: DEFINE THE DECISION
+[Your analysis]
+Result: [Clear decision statement]
+
+STEP 2: IDENTIFY DECISION CRITERIA  
+[Your analysis]
+Result: [Prioritized criteria list]
+
+STEP 3: GENERATE ALTERNATIVES
+[Your analysis]
+Result: [List of viable options]
+
+STEP 4: EVALUATE EACH ALTERNATIVE
+[Your analysis]
+Result: [Evaluation matrix or detailed comparison]
+
+STEP 5: CONSIDER IMPLEMENTATION
+[Your analysis]
+Result: [Implementation feasibility assessment]
+
+STEP 6: MAKE THE DECISION
+[Your analysis]
+Result: [Recommended decision with clear reasoning]
+
+STEP 7: PLAN NEXT STEPS
+[Your analysis]
+Result: [Action plan with timeline]
+
+FINAL RECOMMENDATION:
+[Summary of your recommended decision and key rationale]
+```
+
+Begin your systematic decision analysis now.

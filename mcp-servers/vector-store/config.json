@@ -1,0 +1,178 @@
+{
+  "embedding_providers": {
+    "sentence_transformers": {
+      "type": "sentence_transformers",
+      "model": "all-MiniLM-L6-v2",
+      "enabled": true,
+      "cache_embeddings": true
+    },
+    "openai": {
+      "type": "openai",
+      "model": "text-embedding-3-small",
+      "enabled": false,
+      "api_key": null,
+      "rate_limit": 1000,
+      "batch_size": 100
+    },
+    "openai_large": {
+      "type": "openai",
+      "model": "text-embedding-3-large",
+      "enabled": false,
+      "api_key": null,
+      "rate_limit": 1000,
+      "batch_size": 50
+    }
+  },
+  "vector_stores": {
+    "chromadb": {
+      "type": "chromadb",
+      "enabled": true,
+      "persist_directory": "./data/chroma_db",
+      "remote_host": null,
+      "remote_port": 8000,
+      "settings": {
+        "allow_reset": true,
+        "anonymized_telemetry": false
+      }
+    },
+    "qdrant": {
+      "type": "qdrant",
+      "enabled": false,
+      "host": "localhost",
+      "port": 6333,
+      "url": null,
+      "api_key": null,
+      "timeout": 30,
+      "prefer_grpc": true
+    },
+    "pinecone": {
+      "type": "pinecone",
+      "enabled": false,
+      "api_key": null,
+      "environment": "us-east-1-aws",
+      "index_name": "mcp-vectors",
+      "dimension": 384,
+      "metric": "cosine"
+    },
+    "weaviate": {
+      "type": "weaviate",
+      "enabled": false,
+      "url": "http://localhost:8080",
+      "api_key": null,
+      "timeout": 30,
+      "startup_period": 5
+    },
+    "memory": {
+      "type": "memory",
+      "enabled": true,
+      "max_collections": 10,
+      "max_documents_per_collection": 10000
+    }
+  },
+  "server": {
+    "name": "Vector Store MCP Server",
+    "version": "1.0.0",
+    "description": "Production-grade vector storage and semantic search",
+    "host": "localhost",
+    "port": 8003,
+    "transport": "stdio"
+  },
+  "features": {
+    "multi_backend_support": true,
+    "semantic_search": true,
+    "hybrid_search": true,
+    "batch_operations": true,
+    "metadata_filtering": true,
+    "document_chunking": true,
+    "analytics": true,
+    "collection_management": true
+  },
+  "text_processing": {
+    "default_chunk_size": 2000,
+    "default_chunk_overlap": 200,
+    "max_content_length": 100000,
+    "supported_formats": ["text", "markdown", "json"],
+    "preprocessing": {
+      "normalize_whitespace": true,
+      "remove_empty_chunks": true,
+      "min_chunk_length": 50
+    }
+  },
+  "search": {
+    "default_limit": 10,
+    "max_limit": 100,
+    "default_threshold": 0.7,
+    "min_threshold": 0.0,
+    "max_threshold": 1.0,
+    "result_caching": false,
+    "explain_scores": true
+  },
+  "performance": {
+    "batch_size": 100,
+    "max_concurrent_operations": 10,
+    "embedding_cache_size": 1000,
+    "connection_pool_size": 5,
+    "timeout_seconds": 30,
+    "retry_attempts": 3
+  },
+  "storage": {
+    "auto_persist": true,
+    "backup_interval_hours": 24,
+    "cleanup_old_backups": true,
+    "backup_retention_days": 7,
+    "compression": "gzip"
+  },
+  "monitoring": {
+    "track_operations": true,
+    "track_performance": true,
+    "track_errors": true,
+    "log_search_queries": false,
+    "metrics_retention_days": 30
+  },
+  "security": {
+    "validate_inputs": true,
+    "sanitize_content": true,
+    "max_metadata_size": 10000,
+    "allowed_metadata_types": ["string", "number", "boolean"],
+    "content_filters": []
+  },
+  "collections": {
+    "auto_create": true,
+    "default_dimension": 384,
+    "default_distance_metric": "cosine",
+    "max_collections": 100,
+    "naming_rules": {
+      "pattern": "^[a-zA-Z0-9_-]+$",
+      "max_length": 50,
+      "reserved_names": ["system", "admin", "temp"]
+    }
+  },
+  "analytics": {
+    "track_search_patterns": true,
+    "track_popular_documents": true,
+    "track_collection_usage": true,
+    "generate_insights": true,
+    "retention_period_days": 90
+  },
+  "integrations": {
+    "langchain": {
+      "enabled": true,
+      "text_splitter": "RecursiveCharacterTextSplitter"
+    },
+    "llamaindex": {
+      "enabled": false,
+      "node_parser": "SimpleNodeParser"
+    },
+    "external_apis": {
+      "allow_webhooks": false,
+      "webhook_timeout": 10
+    }
+  },
+  "development": {
+    "debug_mode": false,
+    "log_embeddings": false,
+    "log_vectors": false,
+    "benchmark_mode": false,
+    "test_collections": ["test", "benchmark", "dev"]
+  }
+}

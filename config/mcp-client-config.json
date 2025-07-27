@@ -1,0 +1,328 @@
+{
+  "mcp_client": {
+    "connection": {
+      "server_url": "ws://localhost:8000/mcp",
+      "timeout": 30000,
+      "retry_attempts": 3,
+      "reconnect_interval": 5000,
+      "heartbeat_interval": 60000,
+      "protocol_version": "2024-11-05"
+    },
+    "client_info": {
+      "name": "mcp-demo-client",
+      "version": "1.0.0",
+      "capabilities": {
+        "roots": {
+          "listChanged": true
+        },
+        "sampling": {},
+        "logging": {
+          "level": "info"
+        }
+      }
+    },
+    "server_endpoints": {
+      "mcp_websocket": "ws://localhost:8000/mcp",
+      "http_api": "http://localhost:8000",
+      "health_check": "http://localhost:8000/health",
+      "docs": "http://localhost:8000/docs"
+    }
+  },
+  "llm_integration": {
+    "prompt_builder": {
+      "enabled": true,
+      "tool_name": "build_prompt",
+      "default_template": "business_rule_generation.jinja2",
+      "templates": {
+        "business_rules": "business_rule_generation.jinja2",
+        "validation": "rule_validation.jinja2",
+        "context_search": "context_search.jinja2",
+        "sequential_thinking": "sequential_thinking.jinja2"
+      },
+      "parameters": {
+        "max_length": 8000,
+        "include_examples": true,
+        "thinking_steps": true,
+        "context_awareness": true
+      }
+    },
+    "providers": {
+      "primary": "lmstudio",
+      "fallback": "local",
+      "available": {
+        "lmstudio": {
+          "tool_name": "generate_with_lmstudio",
+          "endpoint": "http://localhost:1234/v1",
+          "model_selection": "auto",
+          "parameters": {
+            "temperature": 0.7,
+            "max_tokens": 2000,
+            "stream": true,
+            "top_p": 0.9,
+            "frequency_penalty": 0.0,
+            "presence_penalty": 0.0
+          }
+        },
+        "openai": {
+          "tool_name": "generate_with_openai",
+          "model": "gpt-4",
+          "parameters": {
+            "temperature": 0.7,
+            "max_tokens": 2000,
+            "stream": false
+          }
+        },
+        "anthropic": {
+          "tool_name": "generate_with_anthropic",
+          "model": "claude-3-sonnet-20240229",
+          "parameters": {
+            "temperature": 0.7,
+            "max_tokens": 2000
+          }
+        },
+        "local": {
+          "tool_name": "generate_with_local",
+          "mock_mode": true,
+          "parameters": {
+            "response_delay": 1000
+          }
+        }
+      }
+    }
+  },
+  "business_rules": {
+    "generation": {
+      "tool_name": "generate_business_rule",
+      "enabled": true,
+      "parameters": {
+        "use_sequential_thinking": true,
+        "thinking_steps": [
+          "context_analysis",
+          "requirements_parsing", 
+          "logic_design",
+          "business_optimization",
+          "json_formatting"
+        ],
+        "include_examples": true,
+        "validate_output": true,
+        "store_session": true
+      }
+    },
+    "validation": {
+      "tool_name": "validate_business_rule",
+      "enabled": true,
+      "parameters": {
+        "score_threshold": 7,
+        "check_completeness": true,
+        "check_consistency": true,
+        "check_implementability": true,
+        "provide_recommendations": true
+      }
+    },
+    "context_search": {
+      "tool_name": "search_context",
+      "enabled": true,
+      "parameters": {
+        "max_results": 10,
+        "similarity_threshold": 0.7,
+        "include_metadata": true,
+        "search_types": ["semantic", "keyword"]
+      }
+    }
+  },
+  "session_management": {
+    "enabled": true,
+    "storage": {
+      "type": "auto",
+      "redis": {
+        "host": "localhost",
+        "port": 6379,
+        "db": 0,
+        "ttl": 3600
+      },
+      "memory": {
+        "cleanup_interval": 300,
+        "max_sessions": 100
+      }
+    },
+    "session_config": {
+      "auto_create": true,
+      "include_history": true,
+      "max_history_length": 50,
+      "persist_context": true
+    }
+  },
+  "vector_store": {
+    "enabled": true,
+    "provider": "auto",
+    "chroma": {
+      "host": "localhost",
+      "port": 8001,
+      "collection_name": "mcp_documents",
+      "embedding_function": "default"
+    },
+    "memory": {
+      "embedding_size": 384,
+      "similarity_metric": "cosine"
+    },
+    "search_config": {
+      "default_limit": 10,
+      "max_limit": 50,
+      "include_distances": true,
+      "include_metadata": true
+    }
+  },
+  "tools": {
+    "available": [
+      {
+        "name": "generate_business_rule",
+        "description": "Generate business rules using sequential thinking process",
+        "category": "generation",
+        "requires_session": true
+      },
+      {
+        "name": "validate_business_rule", 
+        "description": "Validate and score business rules",
+        "category": "validation",
+        "requires_session": true
+      },
+      {
+        "name": "search_context",
+        "description": "Search for relevant context and examples",
+        "category": "search",
+        "requires_session": false
+      },
+      {
+        "name": "build_prompt",
+        "description": "Build prompts using templates and context",
+        "category": "prompt",
+        "requires_session": false
+      },
+      {
+        "name": "manage_session",
+        "description": "Create and manage user sessions",
+        "category": "session",
+        "requires_session": false
+      }
+    ],
+    "auto_discovery": true,
+    "cache_tools_list": true,
+    "refresh_interval": 300
+  },
+  "error_handling": {
+    "retry_policy": {
+      "max_retries": 3,
+      "backoff_strategy": "exponential",
+      "base_delay": 1000,
+      "max_delay": 30000
+    },
+    "fallback_behavior": {
+      "use_local_provider": true,
+      "use_memory_storage": true,
+      "graceful_degradation": true
+    },
+    "error_reporting": {
+      "log_errors": true,
+      "include_stack_trace": false,
+      "report_to_user": true
+    }
+  },
+  "performance": {
+    "request_batching": {
+      "enabled": false,
+      "batch_size": 5,
+      "batch_timeout": 100
+    },
+    "caching": {
+      "tools_list": true,
+      "responses": false,
+      "templates": true
+    },
+    "limits": {
+      "max_concurrent_requests": 10,
+      "request_timeout": 30000,
+      "max_payload_size": 1048576
+    }
+  },
+  "security": {
+    "authentication": {
+      "required": false,
+      "method": "none"
+    },
+    "encryption": {
+      "in_transit": false,
+      "at_rest": false
+    },
+    "validation": {
+      "validate_inputs": true,
+      "sanitize_outputs": true,
+      "check_permissions": false
+    }
+  },
+  "logging": {
+    "level": "info",
+    "format": "json",
+    "destinations": ["console"],
+    "include_request_id": true,
+    "include_timing": true,
+    "log_tool_calls": true,
+    "log_responses": false
+  },
+  "monitoring": {
+    "health_checks": {
+      "enabled": true,
+      "interval": 30000,
+      "endpoints": [
+        "http://localhost:8000/health",
+        "http://localhost:1234/v1/models"
+      ]
+    },
+    "metrics": {
+      "enabled": false,
+      "endpoint": null,
+      "collection_interval": 60000
+    }
+  },
+  "demo_mode": {
+    "enabled": true,
+    "guided_demo": {
+      "enabled": true,
+      "auto_progress": false,
+      "prefilled_templates": true,
+      "step_validation": true
+    },
+    "scenarios": {
+      "telecommunications": {
+        "enabled": true,
+        "template": "telco_business_rules.json",
+        "context": "B2B enterprise services with volume discounts"
+      },
+      "ecommerce": {
+        "enabled": true,
+        "template": "ecommerce_business_rules.json", 
+        "context": "Multi-vendor marketplace with dynamic pricing"
+      },
+      "financial": {
+        "enabled": true,
+        "template": "financial_business_rules.json",
+        "context": "Digital banking with compliance requirements"
+      }
+    },
+    "test_data": {
+      "high_volume_customer": {
+        "customer_tier": "enterprise",
+        "monthly_volume": 50000,
+        "contract_type": "annual"
+      },
+      "medium_volume_customer": {
+        "customer_tier": "business",
+        "monthly_volume": 5000,
+        "contract_type": "monthly"
+      },
+      "edge_cases": {
+        "minimum_threshold": true,
+        "exception_handling": true
+      }
+    }
+  }
+}

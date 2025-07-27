@@ -1,0 +1,174 @@
+global:
+  log_level: INFO
+  health_check_interval: 30
+  startup_timeout: 60
+  shutdown_timeout: 30
+  max_concurrent_operations: 10
+
+services:
+  llm_provider:
+    type: llm_provider
+    enabled: true
+    command: [python, main.py]
+    working_directory: ../llm-provider
+    environment:
+      LOG_LEVEL: INFO
+      MCP_SERVER_NAME: llm-provider
+    port: 8002
+    health_check_url: null
+    dependencies: []
+    restart_policy: on-failure
+    restart_delay: 5
+    max_restarts: 3
+    timeout: 30
+    priority: 10
+    description: "Multi-provider LLM service with AWS, OpenAI, Anthropic, LM Studio, Ollama support"
+
+  vector_store:
+    type: vector_store
+    enabled: true
+    command: [python, main.py]
+    working_directory: ../vector-store
+    environment:
+      LOG_LEVEL: INFO
+      MCP_SERVER_NAME: vector-store
+    port: 8003
+    health_check_url: null
+    dependencies: []
+    restart_policy: on-failure
+    restart_delay: 5
+    max_restarts: 3
+    timeout: 30
+    priority: 20
+    description: "Vector storage and semantic search with ChromaDB, Qdrant, Pinecone support"
+
+  memory:
+    type: memory
+    enabled: true
+    command: [python, main.py]
+    working_directory: ../memory
+    environment:
+      LOG_LEVEL: INFO
+      MCP_SERVER_NAME: memory
+    port: 8004
+    health_check_url: null
+    dependencies: []
+    restart_policy: on-failure
+    restart_delay: 5
+    max_restarts: 3
+    timeout: 30
+    priority: 30
+    description: "Memory management and persistence with Redis, SQLite, PostgreSQL support"
+
+  web_fetch:
+    type: web_fetch
+    enabled: true
+    command: [python, main.py]
+    working_directory: ../web-fetch
+    environment:
+      LOG_LEVEL: INFO
+      MCP_SERVER_NAME: web-fetch
+    port: 8005
+    health_check_url: null
+    dependencies: []
+    restart_policy: on-failure
+    restart_delay: 5
+    max_restarts: 3
+    timeout: 30
+    priority: 40
+    description: "Web content fetching and processing with advanced content extraction"
+
+  sequential_thinker:
+    type: sequential_thinker
+    enabled: true
+    command: [python, main.py]
+    working_directory: ../../sequential-thinker-mcp
+    environment:
+      LOG_LEVEL: INFO
+      MCP_SERVER_NAME: sequential-thinker
+    port: 8001
+    health_check_url: null
+    dependencies: []
+    restart_policy: on-failure
+    restart_delay: 5
+    max_restarts: 3
+    timeout: 30
+    priority: 50
+    description: "Sequential thinking and structured reasoning for complex problem solving"
+
+monitoring:
+  enabled: true
+  health_check_interval: 30
+  performance_monitoring: true
+  log_aggregation: false
+  metrics_collection: true
+  alerting: false
+
+logging:
+  level: INFO
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: null
+  max_size_mb: 10
+  backup_count: 5
+  console_output: true
+
+networking:
+  bind_host: localhost
+  port_range_start: 8001
+  port_range_end: 8010
+  allow_external_connections: false
+  ssl_enabled: false
+
+security:
+  authentication: false
+  authorization: false
+  rate_limiting: false
+  request_validation: true
+  response_sanitization: true
+
+performance:
+  max_concurrent_requests: 100
+  request_timeout: 30
+  connection_pool_size: 20
+  memory_limit_mb: 1024
+  cpu_limit_percent: 80
+
+orchestration:
+  auto_start_services: false
+  startup_order_by_priority: true
+  dependency_resolution: true
+  graceful_shutdown: true
+  service_discovery: true
+  load_balancing: false
+  failover: true
+
+integration:
+  claude_desktop:
+    enabled: true
+    config_path: ~/.config/claude/desktop/mcp_servers.json
+    auto_register: false
+  
+  vscode:
+    enabled: false
+    extension_id: null
+    auto_register: false
+  
+  external_monitoring:
+    enabled: false
+    prometheus_endpoint: null
+    grafana_dashboard: null
+
+backup:
+  enabled: false
+  interval_hours: 24
+  retention_days: 7
+  backup_path: ./backups
+  include_configs: true
+  include_data: false
+
+development:
+  debug_mode: false
+  hot_reload: false
+  development_services: []
+  test_mode: false
+  mock_services: false

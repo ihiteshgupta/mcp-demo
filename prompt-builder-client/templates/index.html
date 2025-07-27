@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Builder - AI-Powered Prompt Engineering</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        [x-cloak] { display: none !important; }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .thinking-step {
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+        .thinking-step:hover {
+            border-left-color: #764ba2;
+            transform: translateX(5px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen" x-data="promptBuilder()">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-brain text-2xl"></i>
+                    <h1 class="text-2xl font-bold">Prompt Builder</h1>
+                    <span class="bg-white/20 px-3 py-1 rounded-full text-sm">AI-Powered</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <!-- MCP Status -->
+                    <div class="flex items-center space-x-2">
+                        <div class="flex items-center space-x-1">
+                            <div :class="mcpStatus.llm_provider ? 'bg-green-400' : 'bg-red-400'" class="w-2 h-2 rounded-full"></div>
+                            <span class="text-sm">LLM</span>
+                        </div>
+                        <div class="flex items-center space-x-1">
+                            <div :class="mcpStatus.sequential_thinker ? 'bg-green-400' : 'bg-red-400'" class="w-2 h-2 rounded-full"></div>
+                            <span class="text-sm">Thinking</span>
+                        </div>
+                    </div>
+                    <button @click="refreshStatus()" class="bg-white/20 hover:bg-white/30 px-3 py-1 rounded-lg text-sm transition">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        <!-- Introduction -->
+        <div class="bg-white rounded-xl card-shadow p-8 mb-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Build Perfect Prompts with AI</h2>
+                <p class="text-gray-600 text-lg mb-6">Leverage AWS Bedrock and Sequential Thinking to create optimized prompts for any task</p>
+                <div class="flex justify-center space-x-4">
+                    <div class="flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-lg">
+                        <i class="fas fa-aws text-orange-500"></i>
+                        <span class="text-sm font-medium">AWS Bedrock</span>
+                    </div>
+                    <div class="flex items-center space-x-2 bg-purple-50 px-4 py-2 rounded-lg">
+                        <i class="fas fa-lightbulb text-purple-500"></i>
+                        <span class="text-sm font-medium">Sequential Thinking</span>
+                    </div>
+                    <div class="flex items-center space-x-2 bg-green-50 px-4 py-2 rounded-lg">
+                        <i class="fas fa-magic text-green-500"></i>
+                        <span class="text-sm font-medium">AI Optimization</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prompt Builder Form -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Input Section -->
+            <div class="bg-white rounded-xl card-shadow p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                    <i class="fas fa-edit text-blue-500 mr-3"></i>
+                    Prompt Requirements
+                </h3>
+
+                <form @submit.prevent="generatePrompt()" class="space-y-6">
+                    <!-- Task Description -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-bullseye text-red-500 mr-2"></i>
+                            Task Description *
+                        </label>
+                        <textarea
+                            x-model="promptRequest.task_description"
+                            placeholder="Describe what you want the prompt to accomplish..."
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                            rows="3"
+                            required
+                        ></textarea>
+                    </div>
+
+                    <!-- Context -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                            Additional Context
+                        </label>
+                        <textarea
+                            x-model="promptRequest.context"
+                            placeholder="Provide any additional context or constraints..."
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                            rows="2"
+                        ></textarea>
+                    </div>
+
+                    <!-- Prompt Type -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-tag text-purple-500 mr-2"></i>
+                            Prompt Type
+                        </label>
+                        <select
+                            x-model="promptRequest.prompt_type"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                            <option value="general">General Purpose</option>
+                            <option value="creative">Creative Writing</option>
+                            <option value="analytical">Analytical</option>
+                            <option value="code">Code Generation</option>
+                            <option value="explanation">Explanation</option>
+                        </select>
+                    </div>
+
+                    <!-- Target Audience -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-users text-green-500 mr-2"></i>
+                            Target Audience
+                        </label>
+                        <select
+                            x-model="promptRequest.target_audience"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                            <option value="general">General Audience</option>
+                            <option value="technical">Technical Professionals</option>
+                            <option value="students">Students</option>
+                            <option value="experts">Domain Experts</option>
+                            <option value="beginners">Beginners</option>
+                        </select>
+                    </div>
+
+                    <!-- Advanced Options -->
+                    <div class="border-t pt-4">
+                        <button 
+                            type="button"
+                            @click="showAdvanced = !showAdvanced"
+                            class="flex items-center text-sm font-medium text-gray-700 mb-4"
+                        >
+                            <i :class="showAdvanced ? 'fas fa-chevron-down' : 'fas fa-chevron-right'" class="mr-2"></i>
+                            Advanced Options
+                        </button>
+
+                        <div x-show="showAdvanced" x-cloak class="space-y-4">
+                            <!-- Sequential Thinking -->
+                            <div class="flex items-center">
+                                <input
+                                    type="checkbox"
+                                    x-model="promptRequest.use_sequential_thinking"
+                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                >
+                                <label class="ml-2 text-sm text-gray-700">
+                                    Use Sequential Thinking (Recommended)
+                                </label>
+                            </div>
+
+                            <!-- Model Selection -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Model Preference</label>
+                                <select
+                                    x-model="promptRequest.model_preference"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                >
+                                    <option value="auto">Auto Select</option>
+                                    <option value="anthropic.claude-3-5-sonnet-20241022-v2:0">Claude 3.5 Sonnet</option>
+                                    <option value="anthropic.claude-3-haiku-20240307-v1:0">Claude 3 Haiku</option>
+                                </select>
+                            </div>
+
+                            <!-- Temperature -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Creativity (Temperature): <span x-text="promptRequest.temperature"></span>
+                                </label>
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="1"
+                                    step="0.1"
+                                    x-model="promptRequest.temperature"
+                                    class="w-full"
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Generate Button -->
+                    <button
+                        type="submit"
+                        :disabled="generating || !promptRequest.task_description"
+                        class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 focus:ring-4 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                    >
+                        <span x-show="!generating" class="flex items-center justify-center">
+                            <i class="fas fa-magic mr-2"></i>
+                            Generate Prompt
+                        </span>
+                        <span x-show="generating" class="flex items-center justify-center">
+                            <i class="fas fa-spinner fa-spin mr-2"></i>
+                            Generating...
+                        </span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Results Section -->
+            <div class="space-y-6">
+                <!-- Generated Prompt -->
+                <div x-show="result.generated_prompt" x-cloak class="bg-white rounded-xl card-shadow p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-sparkles text-yellow-500 mr-3"></i>
+                        Generated Prompt
+                    </h3>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                        <pre x-text="result.generated_prompt" class="whitespace-pre-wrap text-sm text-gray-800"></pre>
+                    </div>
+
+                    <div class="flex space-x-3">
+                        <button
+                            @click="copyToClipboard(result.generated_prompt)"
+                            class="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm"
+                        >
+                            <i class="fas fa-copy mr-2"></i>
+                            Copy
+                        </button>
+                        <button
+                            @click="showOptimization = true"
+                            class="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm"
+                        >
+                            <i class="fas fa-cog mr-2"></i>
+                            Optimize
+                        </button>
+                        <button
+                            @click="showTesting = true"
+                            class="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition text-sm"
+                        >
+                            <i class="fas fa-vial mr-2"></i>
+                            Test
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Thinking Process -->
+                <div x-show="result.structured_thinking" x-cloak class="bg-white rounded-xl card-shadow p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-brain text-purple-500 mr-3"></i>
+                        Thinking Process
+                    </h3>
+                    
+                    <div class="bg-purple-50 rounded-lg p-4">
+                        <pre x-text="result.structured_thinking" class="whitespace-pre-wrap text-sm text-gray-700"></pre>
+                    </div>
+                </div>
+
+                <!-- Generation Info -->
+                <div x-show="result.model_used" x-cloak class="bg-white rounded-xl card-shadow p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-info-circle text-blue-500 mr-3"></i>
+                        Generation Details
+                    </h3>
+                    
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <span class="font-medium text-gray-600">Model:</span>
+                            <p x-text="result.model_used" class="text-gray-800"></p>
+                        </div>
+                        <div>
+                            <span class="font-medium text-gray-600">Provider:</span>
+                            <p class="text-gray-800">AWS Bedrock</p>
+                        </div>
+                        <div x-show="result.usage">
+                            <span class="font-medium text-gray-600">Tokens:</span>
+                            <p x-text="result.usage ? `${result.usage.input_tokens} + ${result.usage.output_tokens} = ${result.usage.total_tokens}` : ''" class="text-gray-800"></p>
+                        </div>
+                        <div>
+                            <span class="font-medium text-gray-600">Chain ID:</span>
+                            <p x-text="result.thinking_chain_id || 'N/A'" class="text-gray-800 font-mono text-xs"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Templates Section -->
+        <div class="mt-12 bg-white rounded-xl card-shadow p-8">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                <i class="fas fa-templates text-green-500 mr-3"></i>
+                Quick Start Templates
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <template x-for="(template, key) in templates" :key="key">
+                    <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:shadow-md transition cursor-pointer"
+                         @click="useTemplate(key)">
+                        <h4 class="font-medium text-gray-800 mb-2" x-text="template.name"></h4>
+                        <p class="text-sm text-gray-600 mb-3" x-text="template.description"></p>
+                        <div class="flex flex-wrap gap-1">
+                            <template x-for="variable in template.variables" :key="variable">
+                                <span class="text-xs bg-gray-100 px-2 py-1 rounded" x-text="variable"></span>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </main>
+
+    <!-- Optimization Modal -->
+    <div x-show="showOptimization" x-cloak class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-6 m-4 max-w-2xl w-full max-h-screen overflow-y-auto">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Optimize Prompt</h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Optimization Goals</label>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="checkbox" x-model="optimizationGoals" value="clarity" class="mr-2">
+                            Improve clarity and specificity
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" x-model="optimizationGoals" value="conciseness" class="mr-2">
+                            Make more concise
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" x-model="optimizationGoals" value="creativity" class="mr-2">
+                            Enhance creativity
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" x-model="optimizationGoals" value="accuracy" class="mr-2">
+                            Improve accuracy
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex space-x-3">
+                    <button
+                        @click="optimizePrompt()"
+                        class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+                    >
+                        Optimize
+                    </button>
+                    <button
+                        @click="showOptimization = false"
+                        class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Testing Modal -->
+    <div x-show="showTesting" x-cloak class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-6 m-4 max-w-2xl w-full max-h-screen overflow-y-auto">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Test Prompt</h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Test Inputs (one per line)</label>
+                    <textarea
+                        x-model="testInputs"
+                        placeholder="Enter test inputs to validate your prompt..."
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        rows="5"
+                    ></textarea>
+                </div>
+
+                <div class="flex space-x-3">
+                    <button
+                        @click="testPrompt()"
+                        class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition"
+                    >
+                        Run Tests
+                    </button>
+                    <button
+                        @click="showTesting = false"
+                        class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Toast -->
+    <div x-show="errorMessage" x-cloak 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 transform translate-y-2"
+         x-transition:enter-end="opacity-100 transform translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 transform translate-y-0"
+         x-transition:leave-end="opacity-0 transform translate-y-2"
+         class="fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
+        <div class="flex items-center">
+            <i class="fas fa-exclamation-triangle mr-2"></i>
+            <span x-text="errorMessage"></span>
+            <button @click="errorMessage = ''" class="ml-4 text-white hover:text-red-200">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div x-show="successMessage" x-cloak 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 transform translate-y-2"
+         x-transition:enter-end="opacity-100 transform translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 transform translate-y-0"
+         x-transition:leave-end="opacity-0 transform translate-y-2"
+         class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
+        <div class="flex items-center">
+            <i class="fas fa-check mr-2"></i>
+            <span x-text="successMessage"></span>
+            <button @click="successMessage = ''" class="ml-4 text-white hover:text-green-200">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function promptBuilder() {
+            return {
+                // State
+                promptRequest: {
+                    task_description: '',
+                    context: '',
+                    prompt_type: 'general',
+                    target_audience: 'general',
+                    use_sequential_thinking: true,
+                    model_preference: 'auto',
+                    max_tokens: 2000,
+                    temperature: 0.7
+                },
+                result: {},
+                generating: false,
+                showAdvanced: false,
+                showOptimization: false,
+                showTesting: false,
+                optimizationGoals: [],
+                testInputs: '',
+                mcpStatus: {
+                    llm_provider: false,
+                    sequential_thinker: false
+                },
+                templates: {},
+                errorMessage: '',
+                successMessage: '',
+
+                // Initialize
+                init() {
+                    this.loadTemplates();
+                    this.checkMCPStatus();
+                    this.connectWebSocket();
+                },
+
+                // WebSocket connection
+                connectWebSocket() {
+                    const ws = new WebSocket(`ws://${window.location.host}/ws`);
+                    
+                    ws.onopen = () => {
+                        console.log('WebSocket connected');
+                        ws.send(JSON.stringify({ type: 'status_request' }));
+                    };
+                    
+                    ws.onmessage = (event) => {
+                        const data = JSON.parse(event.data);
+                        if (data.type === 'status') {
+                            this.mcpStatus = data.mcp_servers;
+                        }
+                    };
+                    
+                    ws.onclose = () => {
+                        console.log('WebSocket disconnected');
+                        setTimeout(() => this.connectWebSocket(), 5000);
+                    };
+                },
+
+                // Load templates
+                async loadTemplates() {
+                    try {
+                        const response = await fetch('/api/templates');
+                        const data = await response.json();
+                        this.templates = data.templates;
+                    } catch (error) {
+                        console.error('Failed to load templates:', error);
+                    }
+                },
+
+                // Check MCP status
+                async checkMCPStatus() {
+                    try {
+                        const response = await fetch('/api/health');
+                        const data = await response.json();
+                        this.mcpStatus = data.mcp_servers;
+                    } catch (error) {
+                        console.error('Failed to check MCP status:', error);
+                    }
+                },
+
+                // Refresh status
+                async refreshStatus() {
+                    await this.checkMCPStatus();
+                    this.showSuccess('Status refreshed');
+                },
+
+                // Generate prompt
+                async generatePrompt() {
+                    if (!this.promptRequest.task_description.trim()) {
+                        this.showError('Task description is required');
+                        return;
+                    }
+
+                    this.generating = true;
+                    this.result = {};
+
+                    try {
+                        const response = await fetch('/api/generate-prompt', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(this.promptRequest)
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                        }
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            this.result = data;
+                            this.showSuccess('Prompt generated successfully!');
+                        } else {
+                            this.showError(data.error || 'Failed to generate prompt');
+                        }
+                    } catch (error) {
+                        console.error('Generation failed:', error);
+                        this.showError(`Generation failed: ${error.message}`);
+                    } finally {
+                        this.generating = false;
+                    }
+                },
+
+                // Optimize prompt
+                async optimizePrompt() {
+                    if (!this.result.generated_prompt || this.optimizationGoals.length === 0) {
+                        this.showError('Select optimization goals');
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch('/api/optimize-prompt', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                original_prompt: this.result.generated_prompt,
+                                optimization_goals: this.optimizationGoals
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            this.result.generated_prompt = data.optimized_prompt;
+                            this.showSuccess('Prompt optimized!');
+                        } else {
+                            this.showError(data.error || 'Optimization failed');
+                        }
+                    } catch (error) {
+                        this.showError(`Optimization failed: ${error.message}`);
+                    }
+
+                    this.showOptimization = false;
+                },
+
+                // Test prompt
+                async testPrompt() {
+                    if (!this.result.generated_prompt || !this.testInputs.trim()) {
+                        this.showError('Enter test inputs');
+                        return;
+                    }
+
+                    const inputs = this.testInputs.split('\n').filter(line => line.trim());
+
+                    try {
+                        const response = await fetch('/api/test-prompt', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                prompt: this.result.generated_prompt,
+                                test_inputs: inputs
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            this.result.test_results = data.test_results;
+                            this.showSuccess(`Testing completed: ${data.successful_tests}/${data.total_tests} passed`);
+                        } else {
+                            this.showError(data.error || 'Testing failed');
+                        }
+                    } catch (error) {
+                        this.showError(`Testing failed: ${error.message}`);
+                    }
+
+                    this.showTesting = false;
+                },
+
+                // Use template
+                useTemplate(templateKey) {
+                    const template = this.templates[templateKey];
+                    if (template) {
+                        this.promptRequest.task_description = `Use the ${template.name} template: ${template.template}`;
+                        this.promptRequest.prompt_type = templateKey.includes('creative') ? 'creative' : 
+                                                        templateKey.includes('analysis') ? 'analytical' : 'general';
+                        this.showSuccess(`Applied ${template.name} template`);
+                    }
+                },
+
+                // Copy to clipboard
+                async copyToClipboard(text) {
+                    try {
+                        await navigator.clipboard.writeText(text);
+                        this.showSuccess('Copied to clipboard');
+                    } catch (error) {
+                        this.showError('Failed to copy to clipboard');
+                    }
+                },
+
+                // Show success message
+                showSuccess(message) {
+                    this.successMessage = message;
+                    setTimeout(() => this.successMessage = '', 3000);
+                },
+
+                // Show error message
+                showError(message) {
+                    this.errorMessage = message;
+                    setTimeout(() => this.errorMessage = '', 5000);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

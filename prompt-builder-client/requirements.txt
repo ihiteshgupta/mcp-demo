@@ -1,0 +1,45 @@
+# Prompt Builder Client Dependencies
+# =================================
+
+# Web Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+jinja2==3.1.2
+python-multipart==0.0.6
+
+# HTTP Client for MCP integration
+aiohttp==3.9.1
+websockets==12.0
+
+# Data validation and serialization
+pydantic==2.5.0
+
+# Utility libraries
+python-dotenv==1.0.0
+click==8.1.7
+
+# Development and testing (optional)
+pytest==7.4.3
+pytest-asyncio==0.21.1
+httpx==0.25.2
+
+# Logging and monitoring
+structlog==23.2.0
+
+# File handling
+pathlib2==2.3.7
+
+# JSON handling
+orjson==3.9.10
+
+# Security
+cryptography==41.0.7
+
+# Optional: Database support (if needed for session persistence)
+# sqlalchemy==2.0.23
+# asyncpg==0.29.0
+# aiosqlite==0.19.0
+
+# Optional: Redis support (if needed for caching)
+# redis==5.0.1
+# aioredis==2.0.1

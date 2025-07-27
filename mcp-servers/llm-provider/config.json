@@ -1,0 +1,141 @@
+{
+  "providers": {
+    "aws_bedrock": {
+      "type": "aws_bedrock",
+      "enabled": true,
+      "priority": 2,
+      "rate_limit": 100,
+      "quota": 1000.0,
+      "config": {
+        "region": "us-east-1",
+        "access_key": null,
+        "secret_key": null
+      },
+      "models": [
+        "anthropic.claude-3-5-sonnet-20241022-v2:0",
+        "anthropic.claude-3-haiku-20240307-v1:0",
+        "amazon.titan-text-premier-v1:0",
+        "meta.llama3-2-90b-instruct-v1:0"
+      ]
+    },
+    "lm_studio": {
+      "type": "lm_studio",
+      "enabled": true,
+      "priority": 1,
+      "rate_limit": null,
+      "quota": null,
+      "config": {
+        "base_url": "http://localhost:1234/v1"
+      },
+      "models": []
+    },
+    "ollama": {
+      "type": "ollama",
+      "enabled": true,
+      "priority": 1,
+      "rate_limit": null,
+      "quota": null,
+      "config": {
+        "base_url": "http://localhost:11434"
+      },
+      "models": []
+    },
+    "openai": {
+      "type": "openai",
+      "enabled": false,
+      "priority": 3,
+      "rate_limit": 50,
+      "quota": 500.0,
+      "config": {
+        "api_key": null
+      },
+      "models": [
+        "gpt-4o",
+        "gpt-4o-mini",
+        "gpt-3.5-turbo"
+      ]
+    },
+    "anthropic": {
+      "type": "anthropic",
+      "enabled": false,
+      "priority": 3,
+      "rate_limit": 50,
+      "quota": 500.0,
+      "config": {
+        "api_key": null
+      },
+      "models": [
+        "claude-3-5-sonnet-20241022",
+        "claude-3-haiku-20240307"
+      ]
+    },
+    "azure_openai": {
+      "type": "azure_openai",
+      "enabled": false,
+      "priority": 4,
+      "rate_limit": 30,
+      "quota": 300.0,
+      "config": {
+        "endpoint": null,
+        "api_key": null,
+        "api_version": "2024-02-01"
+      },
+      "models": []
+    }
+  },
+  "server": {
+    "name": "LLM Provider MCP Server",
+    "version": "1.0.0",
+    "description": "Production-grade LLM provider with multi-source support",
+    "host": "localhost",
+    "port": 8002,
+    "transport": "stdio"
+  },
+  "features": {
+    "model_discovery": true,
+    "usage_tracking": true,
+    "cost_optimization": true,
+    "rate_limiting": true,
+    "fallback_routing": true,
+    "streaming": true,
+    "function_calling": true,
+    "vision_support": true
+  },
+  "optimization": {
+    "auto_select_cheapest": true,
+    "auto_select_fastest": false,
+    "respect_quotas": true,
+    "prefer_local": true,
+    "cache_model_info": true,
+    "batch_requests": false
+  },
+  "monitoring": {
+    "track_usage": true,
+    "track_costs": true,
+    "track_latency": true,
+    "track_errors": true,
+    "alert_quota_threshold": 0.8,
+    "alert_error_rate_threshold": 0.1
+  },
+  "security": {
+    "validate_inputs": true,
+    "sanitize_outputs": false,
+    "log_prompts": false,
+    "log_responses": false,
+    "encrypt_api_keys": false
+  },
+  "defaults": {
+    "max_tokens": 1000,
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "timeout_seconds": 30,
+    "retry_attempts": 3,
+    "retry_delay_seconds": 1
+  },
+  "model_capabilities": {
+    "update_interval_hours": 24,
+    "cache_duration_hours": 168,
+    "discover_models": true,
+    "validate_availability": true
+  }
+}
