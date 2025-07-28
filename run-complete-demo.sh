@@ -282,7 +282,7 @@ start_all_services() {
     local all_started=true
     
     # 1. Sequential Thinker MCP Server
-    if start_service "Sequential Thinker" "sequential-thinker-mcp" "python main.py --port 8001" 8001; then
+    if start_service "Sequential Thinker" "sequential-thinker-mcp" "python3 main.py --port 8001" 8001; then
         log_success "Sequential Thinker MCP Server started"
     else
         all_started=false
@@ -291,7 +291,7 @@ start_all_services() {
     sleep 2
     
     # 2. LLM Provider MCP Server
-    if start_service "LLM Provider" "mcp-servers/llm-provider" "python main.py --port 8002" 8002; then
+    if start_service "LLM Provider" "mcp-servers/llm-provider" "python3 main.py --port 8002" 8002; then
         log_success "LLM Provider MCP Server started"
     else
         all_started=false
@@ -300,7 +300,7 @@ start_all_services() {
     sleep 2
     
     # 3. Memory Management MCP Server
-    if start_service "Memory Management" "mcp-servers/memory" "python main.py --port 8004" 8004; then
+    if start_service "Memory Management" "mcp-servers/memory" "python3 main.py --port 8004" 8004; then
         log_success "Memory Management MCP Server started"
     else
         all_started=false
@@ -309,7 +309,7 @@ start_all_services() {
     sleep 2
     
     # 4. Prompt Builder MCP Server
-    if start_service "Prompt Builder" "prompt-builder-mcp" "python main.py --port 8006" 8006; then
+    if start_service "Prompt Builder" "prompt-builder-mcp" "python3 main.py --port 8006" 8006; then
         log_success "Prompt Builder MCP Server started"
     else
         all_started=false
@@ -318,7 +318,7 @@ start_all_services() {
     sleep 3
     
     # 5. AI Agent Demo Client
-    if start_service "AI Agent Demo" "ai-agent-demo" "python main.py --port 3002" 3002; then
+    if start_service "AI Agent Demo" "ai-agent-demo" "python3 main.py --port 3002" 3002; then
         log_success "AI Agent Demo Client started"
     else
         all_started=false

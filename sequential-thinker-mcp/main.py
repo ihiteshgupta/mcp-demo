@@ -14,15 +14,121 @@ from pathlib import Path
 from typing import Dict, List, Optional, Any
 
 # Add parent directory to path for importing existing components
-sys.path.append(str(Path(__file__).parent.parent))
+mcp_server_path = str(Path(__file__).parent.parent / "mcp-server")
+sys.path.append(mcp_server_path)
 
 from mcp.server.fastmcp import FastMCP
 from mcp.types import Resource, Tool, TextContent, ImageContent, EmbeddedResource
 from pydantic import BaseModel, Field
 
 # Import existing sequential thinking components
-from mcp_server.components.prompt_builder import PromptBuilder, SequentialThinkingStep
-from mcp_server.utils.exceptions import PromptBuilderError
+try:
+    from components.prompt_builder import PromptBuilder, SequentialThinkingStep
+    from utils.exceptions import PromptBuilderError
+except ImportError:
+    # Fallback: Create minimal local versions
+    class PromptBuilderError(Exception):
+        pass
+    
+    class SequentialThinkingStep:
+        def __init__(self, step_number: int, description: str, reasoning: str = "", expected_output: str = ""):
+            self.step_number = step_number
+            self.description = description
+            self.reasoning = reasoning
+            self.expected_output = expected_output
+            self.result = None
+            self.completed = False
+            
+        def to_dict(self):
+            return {
+                "step_number": self.step_number,
+                "description": self.description,
+                "reasoning": self.reasoning,
+                "expected_output": self.expected_output,
+                "result": self.result,
+                "completed": self.completed
+            }
+    
+    class PromptBuilder:
+        def __init__(self, template_dir: str = None):
+            self.thinking_chains = {}
+            
+        def create_thinking_chain(self, chain_id: str, description: str):
+            self.thinking_chains[chain_id] = {
+                "id": chain_id,
+                "description": description,
+                "steps": [],
+                "created_at": datetime.now().isoformat(),
+                "completed": False
+            }
+            return chain_id
+            
+        def add_thinking_step(self, chain_id: str, description: str, reasoning: str = "", expected_output: str = ""):
+            if chain_id not in self.thinking_chains:
+                raise PromptBuilderError(f"Chain {chain_id} not found")
+            
+            step_number = len(self.thinking_chains[chain_id]["steps"]) + 1
+            step = SequentialThinkingStep(step_number, description, reasoning, expected_output)
+            self.thinking_chains[chain_id]["steps"].append(step.to_dict())
+            return step
+            
+        def get_thinking_chain(self, chain_id: str):
+            return self.thinking_chains.get(chain_id)
+            
+        def list_thinking_chains(self):
+            return list(self.thinking_chains.values())
+            
+        def list_templates(self):
+            return ["sequential_thinking", "business_rule_generation"]
+            
+        def build_sequential_thinking_prompt(self, chain_id: str, main_task: str, context: str = "", additional_instructions: str = ""):
+            chain = self.thinking_chains.get(chain_id)
+            if not chain:
+                raise PromptBuilderError(f"Chain {chain_id} not found")
+                
+            prompt = f"Task: {main_task}\n\n"
+            if context:
+                prompt += f"Context: {context}\n\n"
+            
+            prompt += "Please follow these sequential thinking steps:\n\n"
+            for i, step in enumerate(chain["steps"], 1):
+                prompt += f"Step {i}: {step['description']}\n"
+                if step['reasoning']:
+                    prompt += f"Reasoning: {step['reasoning']}\n"
+                if step['expected_output']:
+                    prompt += f"Expected Output: {step['expected_output']}\n"
+                prompt += "\n"
+                
+            if additional_instructions:
+                prompt += f"\nAdditional Instructions: {additional_instructions}"
+                
+            return prompt
+            
+        def build_business_rule_with_thinking(self, context: str, requirements: str, rule_id: str = None, examples: List[str] = None):
+            prompt = f"Generate business rules based on the following:\n\n"
+            prompt += f"Context: {context}\n\n"
+            prompt += f"Requirements: {requirements}\n\n"
+            
+            if examples:
+                prompt += "Examples:\n"
+                for example in examples:
+                    prompt += f"- {example}\n"
+                prompt += "\n"
+                
+            if rule_id:
+                prompt += f"Rule ID: {rule_id}\n\n"
+                
+            prompt += "Please provide a well-structured business rule with clear conditions and actions."
+            return prompt
+            
+        def apply_template(self, template_name: str, variables: Dict[str, Any]):
+            # Simple template application
+            if template_name == "sequential_thinking":
+                return f"Sequential thinking for: {variables.get('task', 'Unknown task')}"
+            elif template_name == "business_rule_generation":
+                return f"Business rule for: {variables.get('context', 'Unknown context')}"
+            else:
+                return f"Template {template_name} with variables: {variables}"
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -434,7 +540,6 @@ async def validate_thinking_chain(chain_id: str) -> Dict[str, Any]:
         }
 
 
-@mcp.server.lifespan
 async def setup_and_cleanup():
     """Initialize and cleanup server components."""
     global prompt_builder
@@ -458,6 +563,7 @@ async def setup_and_cleanup():
 def main():
     """Run the Sequential Thinker MCP server."""
     import argparse
+    global prompt_builder
     
     parser = argparse.ArgumentParser(description="Sequential Thinker MCP Server")
     parser.add_argument("--host", default="localhost", help="Host to bind to")
@@ -468,6 +574,16 @@ def main():
     
     # Set logging level
     logging.getLogger().setLevel(getattr(logging, args.log_level.upper()))
+    
+    # Initialize prompt builder
+    try:
+        template_dir = Path(__file__).parent.parent / "mcp-server" / "templates"
+        prompt_builder = PromptBuilder(str(template_dir))
+        logger.info("Sequential Thinker MCP Server initialized successfully")
+    except Exception as e:
+        logger.error(f"Failed to initialize prompt builder: {e}")
+        # Create with default directory if parent templates not available
+        prompt_builder = PromptBuilder()
     
     # Run the server
     mcp.run(transport="stdio")

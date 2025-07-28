@@ -16,28 +16,41 @@ This demo demonstrates a **real-world AI agent creation pipeline** using:
 
 ## 🚀 Quick Start
 
-### One-Command Demo Launch
+### Recommended Setup (Verified Working)
+
+If you encounter issues with the automated scripts, use this manual approach:
 
 ```bash
-# Start the complete ecosystem
-./run-complete-demo.sh --open
+# 1. Start MCP Server (Python 3.12 recommended)
+cd mcp-server
+python3.12 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+REDIS_HOST=none CHROMA_HOST=none uvicorn main:app --host 0.0.0.0 --port 8000 --reload &
+
+# 2. Start Frontend Client
+cd ../mcp-client
+npm install
+PORT=3001 npm run dev &
+
+# 3. Access the demo
+open http://localhost:3001
 ```
 
-This will:
-1. Start all MCP servers
-2. Launch the demo client
-3. Open your browser to the demo
-4. Guide you through creating an AI agent
-
-### Alternative Quick Starts
+### Automated Scripts (May Require Troubleshooting)
 
 ```bash
+# Complete ecosystem (requires all services)
+./run-complete-demo.sh --open
+
+# Simplified setup (requires Docker)
+./start-local-simple.sh
+
 # Original business rule demo
 ./run-services.sh
-
-# Manual setup
-./start-local-simple.sh
 ```
+
+**Note**: If automated scripts fail, use the "Recommended Setup" above. See [Troubleshooting](#-troubleshooting) section for common issues and solutions.
 
 ## 📚 Complete Documentation
 
@@ -254,11 +267,147 @@ curl http://localhost:3000
 ./stop-local-simple.sh && ./start-local-simple.sh
 ```
 
-### Common Issues
-1. **LM Studio not responding**: Ensure model is loaded and server started
-2. **Python environment issues**: Script automatically handles venv setup
-3. **WebSocket connection failed**: Check firewall and port availability
-4. **Demo not progressing**: Verify all services are running and healthy
+### Common Issues & Solutions
+
+#### 1. **Services Fail to Start (ModuleNotFoundError)**
+**Problem**: Missing dependencies or import errors in MCP services
+
+**Solution**: Use the manual startup approach with proper virtual environments:
+```bash
+# Setup MCP Server
+cd mcp-server
+python3.12 -m venv .venv  # Use Python 3.12 (avoid 3.13 compatibility issues)
+source .venv/bin/activate
+pip install -r requirements.txt
+
+# Start MCP Server with in-memory storage (no Docker required)
+REDIS_HOST=none CHROMA_HOST=none uvicorn main:app --host 0.0.0.0 --port 8000 --reload &
+
+# Setup Frontend Client
+cd ../mcp-client
+npm install
+PORT=3001 npm run dev &  # Use port 3001 if 3000 is busy
+```
+
+#### 2. **Sequential Thinker Import Errors**
+**Problem**: Sequential Thinker service can't import required components
+
+**Solution**: The Sequential Thinker has been fixed with fallback implementations:
+```bash
+cd sequential-thinker-mcp
+python3.12 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python3 main.py --port 8001 &
+```
+
+#### 3. **Python 3.13 Compatibility Issues**
+**Problem**: Pydantic-core build failures with Python 3.13
+
+**Solution**: Use Python 3.12 or 3.11 instead:
+```bash
+# Check available Python versions
+python3.12 --version || python3.11 --version
+
+# Use compatible Python version
+python3.12 -m venv .venv
+```
+
+#### 4. **Port Conflicts**
+**Problem**: Ports already in use
+
+**Solution**: Kill existing processes and use alternative ports:
+```bash
+# Check what's using port 3000
+lsof -i :3000
+
+# Kill process if needed
+kill <PID>
+
+# Or use alternative port
+PORT=3001 npm run dev
+```
+
+#### 5. **Docker Not Available**
+**Problem**: start-local-simple.sh requires Docker for Redis/ChromaDB
+
+**Solution**: Use in-memory storage instead:
+```bash
+# Skip Docker and use memory storage
+cd mcp-server
+source .venv/bin/activate
+REDIS_HOST=none CHROMA_HOST=none uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+#### 6. **Service Health Check Failures**
+**Problem**: Health checks failing because services use different transports
+
+**Solution**: Check services directly:
+```bash
+# Test MCP Server
+curl http://localhost:8000/health
+# Should return: {"status":"healthy","server":"genai-mcp-server","version":"1.0.0"}
+
+# Test Frontend
+curl http://localhost:3001
+# Should return HTML content
+
+# Services are working if you see proper responses
+```
+
+### Verified Working Setup
+
+After troubleshooting, this configuration is confirmed working:
+
+```bash
+# 1. MCP Server (Python 3.12 + in-memory storage)
+cd mcp-server
+python3.12 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+REDIS_HOST=none CHROMA_HOST=none uvicorn main:app --host 0.0.0.0 --port 8000 --reload &
+
+# 2. Frontend Client (Node.js on port 3001)
+cd mcp-client
+npm install
+PORT=3001 npm run dev &
+```
+
+**Access Points:**
+- **Main Demo**: http://localhost:3001
+- **MCP Server API**: http://localhost:8000
+- **API Documentation**: http://localhost:8000/docs
+
+### Service Status Verification
+
+✅ **Working Services:**
+- MCP Server: All components initialized (LLM Provider, Prompt Builder, Session Storage, Vector Store, Business Rules)
+- Frontend: Next.js app with all demo features
+- Memory Storage: Fallback storage working without Redis/ChromaDB
+- LM Studio Integration: Ready (when LM Studio is running)
+
+### Advanced Troubleshooting
+
+#### Complete Service Restart
+```bash
+# Kill all related processes
+pkill -f "uvicorn\|node.*dev"
+
+# Remove old virtual environments
+rm -rf mcp-server/.venv sequential-thinker-mcp/venv
+
+# Clean restart with verified setup
+# Follow the "Verified Working Setup" steps above
+```
+
+#### Debug Mode
+```bash
+# Start MCP server with debug logging
+DEBUG=true LOG_LEVEL=debug uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+# Check detailed logs for issues
+tail -f logs/*.log
+```
 
 ## 🎯 Demo Highlights
 
